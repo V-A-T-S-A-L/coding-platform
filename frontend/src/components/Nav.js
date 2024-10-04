@@ -25,7 +25,7 @@ const Nav = () => {
 
     return (
         <div>
-            {auth ? <ul className='nav-ul'>
+            {/* {auth ? <ul className='nav-ul'>
                 <div className='nav-div'>
                     <div className='pic-div'>
                         <img src={profilePic} className='profile-pic' alt='profile-pic'></img>
@@ -35,11 +35,22 @@ const Nav = () => {
                         <li><Link onClick={logout} to="/signup">Logout:- {JSON.parse(auth).name}</Link></li>
                     </div>
                 </div>
-            </ul>
+            </ul> */}
+            {auth ? <div className='navbar'>
+                <div>
+                    <h3 style={{ paddingLeft: "40px" }}>{'<>'} Code Busters</h3>
+                </div>
+                <div>
+                    <ul className='nav-ul'>
+                        <li><Link style={{ textDecoration: "none", color: "white" }} to="/home">Home</Link></li>
+                        <li><Link style={{ textDecoration: "none", color: "white" }} onClick={logout} to="/signup">Logout:- {JSON.parse(auth).name}</Link></li>
+                    </ul>
+                </div>
+            </div>
                 :
                 <div className='navbar'>
                     <div>
-                        <h3 style={{paddingLeft: "40px"}}>{'<>'} Code Busters</h3>
+                        <h3 style={{ paddingLeft: "40px" }}>{'<>'} Code Busters</h3>
                     </div>
                     <div>
                         <ul className='nav-ul'>

@@ -28,3 +28,27 @@
     text-align: center;
     width: 90px;
 }
+
+.room-div{
+    display: flex;
+    padding: 10px;
+    justify-content: space-evenly;
+    width: 650px;
+}
+
+.new-room, .join-room {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-room button, .join-room button {
+    width: 40%;
+    margin-top: 10px;
+}
+
+.join-room {
+
+}

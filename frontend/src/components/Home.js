@@ -1,6 +1,5 @@
 import React from "react";
 import './home.css';
-import bg from '../assets/bg.jpg';
 
 const Land = () => {
 
