@@ -4,6 +4,7 @@ import Nav from './components/Nav';
 import PrivateComponent from './components/PrivateComponent';
 import Signup from './components/Signup';
 import Login from './components/Login';
+import Land from './components/Home';
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
         <Nav />
         <Routes>
           <Route element={<PrivateComponent />}>
-            <Route path='/' element={<h1>After Login</h1>}/>
+            <Route path='/home' element={<h1>After Login</h1>}/>
           </Route>
+          <Route path='/' element={<Land />}/>
           <Route path='/signup' element={<Signup />}/>
           <Route path='/login' element={<Login />}/>
         </Routes>

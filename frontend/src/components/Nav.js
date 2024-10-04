@@ -1,7 +1,7 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Nav=() => {
+const Nav = () => {
     const auth = localStorage.getItem('user');
     const navigate = useNavigate();
 
@@ -37,10 +37,19 @@ const Nav=() => {
                 </div>
             </ul>
                 :
-                <ul className='nav-ul'>
-                    <li><Link to="/signup">Signup</Link></li>
-                    <li><Link to="/login">Login</Link></li>
-                </ul>
+                <div className='navbar'>
+                    <div>
+                        <h3 style={{paddingLeft: "40px"}}>{'<>'} Code Busters</h3>
+                    </div>
+                    <div>
+                        <ul className='nav-ul'>
+                            <li><Link style={{ textDecoration: "none", color: "white" }} to="/">Home</Link></li>
+                            <li><Link style={{ textDecoration: "none", color: "white" }} to="/signup">Signup</Link></li>
+                            <li><Link style={{ textDecoration: "none", color: "white" }} to="/login">Login</Link></li>
+                            <li><Link style={{ textDecoration: "none", color: "white" }} to="/about">About</Link></li>
+                        </ul>
+                    </div>
+                </div>
             }
         </div>
     );

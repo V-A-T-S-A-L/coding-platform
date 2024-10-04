@@ -1,0 +1,30 @@
+.home-name {
+    height: 40vh;
+    width: 50%;
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-name h1 {
+
+}
+
+.home-name p {
+    text-align: center;
+    color: gray;
+}
+
+.brackets {
+    background-color: white;
+    border-radius: 50%;
+    color: black;
+    text-align: center;
+    width: 90px;
+}
