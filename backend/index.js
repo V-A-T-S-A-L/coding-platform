@@ -47,7 +47,7 @@ app.post('/signup', (req, res) => {
 app.post('/login', (req, res) => {
     const { name, password } = req.body;
 
-    const query = 'SELECT * FROM users WHERE name = ?';
+    const query = 'SELECT * FROM users WHERE email = ?';
     db.query(query, [name], (err, result) => {
         if (err || result.length === 0) return res.status(404).send('User not found');
 
