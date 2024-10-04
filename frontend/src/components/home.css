@@ -32,7 +32,7 @@
 .room-div{
     display: flex;
     padding: 10px;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: 650px;
 }
 
@@ -42,13 +42,57 @@
     padding: 10px;
     align-items: center;
     justify-content: center;
+    border-radius: 25px;
+    background-color: #090909;
+    -webkit-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+    -moz-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+    box-shadow: -12px 17px 25px -12px rgba(57, 57, 57, 0.75);
+    color: white;
+    min-height: 300px;
+    width: 42%;
 }
 
 .new-room button, .join-room button {
     width: 40%;
     margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    background-color: #242424;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.join-room {
+.new-room button:hover, .join-room button:hover {
+    background-color: #333;
+}
 
+.join-room input{
+    padding: 15px;
+    border-radius: 15px;
+    background-color: #242424;
+    border: none;
+    color: white;
+}
+
+.vl {
+    border-left: 1px solid #242424;
+    height: 320px;
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: #292929;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7d7d7d;
+  border-radius: 10px;
 }

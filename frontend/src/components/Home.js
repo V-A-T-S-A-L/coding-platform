@@ -1,5 +1,6 @@
 import React from "react";
 import './home.css';
+import Footer from "./Footer";
 
 const Land = () => {
 
@@ -12,6 +13,7 @@ const Land = () => {
                 <h1 style={{textAlign: "center"}}>CODE BUSTERS</h1>
                 <p>Unleash your coding prowess and conquer the digital realm with Code Busters, the ultimate competitive programming platform.</p>
             </div>
+            <Footer />
         </div>
     )
 }

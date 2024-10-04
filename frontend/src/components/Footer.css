@@ -1,0 +1,27 @@
+/* Ensure the footer is positioned just below the screen initially */
+html, body {
+    height: 100vh; /* Make sure the body takes the full height of the viewport */
+    overflow-y: scroll; /* Allow scrolling even if there is no content */
+}
+
+.footer {
+    position: absolute;
+    bottom: -200px; /* Adjust based on the height of the footer */
+    left: 0;
+    width: 100%;
+    background-color: #080808;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content a {
+    color: #f0f0f0;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer-content a:hover {
+    text-decoration: underline;
+}
