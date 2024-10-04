@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <footer className="footer">
             <div className="footer-content">
-                <h3>{'<>'} Code Busters</h3>
+                <h3>{'</>'} Code Busters</h3>
                 <p>&copy; 2024 Vatsal's Website. All rights reserved.</p>
                 <p>
                     <a href="/terms">Terms & Conditions</a> | <a href="/privacy">Privacy Policy</a>

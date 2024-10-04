@@ -38,11 +38,12 @@ const Nav = () => {
             </ul> */}
             {auth ? <div className='navbar'>
                 <div>
-                    <h3 style={{ paddingLeft: "40px" }}>{'<>'} Code Busters</h3>
+                    <h3 style={{ paddingLeft: "40px" }}>{'</>'} Code Busters</h3>
                 </div>
                 <div>
                     <ul className='nav-ul'>
                         <li><Link style={{ textDecoration: "none", color: "white" }} to="/home">Home</Link></li>
+                        <li><Link style={{ textDecoration: "none", color: "white" }} to="/rooms">My Rooms</Link></li>
                         <li><Link style={{ textDecoration: "none", color: "white" }} onClick={logout} to="/signup">Logout:- {JSON.parse(auth).name}</Link></li>
                     </ul>
                 </div>
@@ -50,7 +51,7 @@ const Nav = () => {
                 :
                 <div className='navbar'>
                     <div>
-                        <h3 style={{ paddingLeft: "40px" }}>{'<>'} Code Busters</h3>
+                        <h3 style={{ paddingLeft: "40px" }}>{'</>'} Code Busters</h3>
                     </div>
                     <div>
                         <ul className='nav-ul'>

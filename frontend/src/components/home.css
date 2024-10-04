@@ -44,12 +44,14 @@
     justify-content: center;
     border-radius: 25px;
     background-color: #090909;
-    -webkit-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
-    -moz-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
-    box-shadow: -12px 17px 25px -12px rgba(57, 57, 57, 0.75);
     color: white;
     min-height: 300px;
     width: 42%;
+    transition: all 0.3s ease;
+}
+
+.new-room:hover, .join-room:hover {
+    transform: scale(1.05);
 }
 
 .new-room button, .join-room button {
@@ -68,7 +70,7 @@
     background-color: #333;
 }
 
-.join-room input{
+.join-room input, .new-room input{
     padding: 15px;
     border-radius: 15px;
     background-color: #242424;
