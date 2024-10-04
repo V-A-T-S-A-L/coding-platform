@@ -26,17 +26,18 @@ db.query(`
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255),
         password VARCHAR(255),
+        email VARCHAR(255),
         profile_pic VARCHAR(255)
     )
 `);
 
 // Signup route
 app.post('/signup', (req, res) => {
-    const { name, password, profilePic } = req.body;
+    const { name, password, email, profilePic } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
 
-    const query = 'INSERT INTO users (name, password, profile_pic) VALUES (?, ?, ?)';
-    db.query(query, [name, hashedPassword, profilePic], (err, result) => {
+    const query = 'INSERT INTO users (name, password, email, profile_pic) VALUES (?, ?, ?, ?)';
+    db.query(query, [name, hashedPassword, email, profilePic], (err, result) => {
         if (err) return res.status(500).send('Error creating user');
         res.status(201).send(req.body);
     });

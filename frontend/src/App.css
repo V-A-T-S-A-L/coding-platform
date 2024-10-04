@@ -1,10 +1,52 @@
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.signup-div {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  border: 1px groove #242424;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 25%;
+  height: auto;
+  padding: 35px;
+  border-radius: 25px;
+  -webkit-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+  -moz-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+  box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+}
+
+.signup-ul {
+  margin: auto;
+  border: 1px solid;
+  margin-left: 0;
+}
+
+.signup-ul li {
+  list-style: none;
+  margin: auto;
+}
+
+.inputBox {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+}
+
+.signup-btn {
+  background-color: #000;
+  border: none;
+  color: white;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius:10px;
+  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: no-preference) {

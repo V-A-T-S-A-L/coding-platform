@@ -23,7 +23,7 @@ const Login = () => {
             const response =  await axios.post('http://localhost:5000/login', data);
             if(response.status === 200 || response.status === 201) {
                 localStorage.setItem('user', JSON.stringify(response.data));
-                navigate("/");
+                navigate("/home");
             } 
         } catch (error) {
             console.warn(error);
