@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Land from './components/Home';
 import PostLoginhome from './components/PostLoginHome';
 import CreateChallenge from './components/NewProblem';
+import Room from './components/Room';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Routes>
           <Route element={<PrivateComponent />}>
             <Route path='/home' element={<PostLoginhome />}/>
-            <Route path='/room/:room_id' element={<h1 style={{color: "white"}}>room</h1>}/>
+            <Route path='/room/:room_id' element={<Room />}/>
             <Route path='/room/:room_id/create-challenge' element={<CreateChallenge />}/>
           </Route>
           <Route path='/' element={<Land />}/>
