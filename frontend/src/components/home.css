@@ -1,4 +1,4 @@
-.home-name {
+.home-name-default {
     height: 40vh;
     width: 50%;
     color: white;
@@ -12,11 +12,20 @@
     align-items: center;
 }
 
+.home-name {
+    height: 40vh;
+    width: 70%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .home-name h1 {
 
 }
 
-.home-name p {
+.home-name-default p {
     text-align: center;
     color: gray;
 }
@@ -34,6 +43,11 @@
     padding: 10px;
     justify-content: space-between;
     width: 650px;
+}
+
+.room-div p {
+    text-align: center;
+    color: #7d7d7d;
 }
 
 .new-room, .join-room {
@@ -79,11 +93,51 @@
 }
 
 .vl {
-    border-left: 1px solid #242424;
-    height: 320px;
+    border-left: 2px solid #242424;
+    height: 600px;
     position: absolute;
-    left: 50%;
+    left: 58%;
     margin-left: -3px;
+}
+
+.joined {
+    width: 30%;
+    margin-right: 100px;
+    border-radius: 30px;
+    border: 1px groove #7d7d7d;
+    height: auto;
+    max-height: 500px;
+    overflow-y: scroll;
+    padding: 25px;
+    color: white;
+    background-color: #090909;
+}
+
+.room-card {
+    background-color: #000;
+    display: flex;
+    justify-content: space-around;
+    border-radius: 25px;
+    margin-top: 15px;
+}
+
+.room-card p {
+    color: #7d7d7d;
+}
+
+.room-card h1{
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.room-card h1:hover {
+    transform: translateX(5px);
+}
+
+.main {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 45px;
 }
 
 ::-webkit-scrollbar {

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const moment = require('moment');
 const app = express();
 
 app.use(cors());
@@ -115,12 +116,12 @@ app.post('/create-room', (req, res) => {
 
 // Join room 
 app.post('/join-room', (req, res) => {
-    const {roomCode, user_id} = req.body;
+    const { roomCode, user_id } = req.body;
 
     room_query = 'SELECT id FROM rooms WHERE room_code = ?';
 
     db.query(room_query, [roomCode], (err, result) => {
-        if(err || result.length === 0) {
+        if (err || result.length === 0) {
             return res.status(404).send('Room not found');
         }
 
@@ -128,17 +129,53 @@ app.post('/join-room', (req, res) => {
 
         const checkMember = 'SELECT * FROM room_members WHERE room_id = ? AND user_id = ?';
         db.query(checkMember, [room_id, user_id], (err, result1) => {
-            if(err) return res.status(500).send('Error checking membership');
-            if(result1.length > 0) return res.status(400).send('User already in room');
+            if (err) return res.status(500).send('Error checking membership');
+            if (result1.length > 0) return res.status(400).send('User already in room');
 
             const insertMember = 'INSERT INTO room_members (room_id, user_id) VALUES (?, ?)';
             db.query(insertMember, [room_id, user_id], (err, result2) => {
-                if(err) return res.status(500).send("Error joining room");
+                if (err) return res.status(500).send("Error joining room");
                 res.status(200).send('Joined room successfully');
             })
         })
     })
 })
+
+// Fetch rooms you have joined
+app.get('/user-rooms/:userId', (req, res) => {
+    const { userId } = req.params;
+
+    const query = `
+        SELECT r.room_name, rm.joined_at 
+        FROM rooms r
+        JOIN room_members rm ON r.id = rm.room_id
+        WHERE rm.user_id = ?
+    `;
+
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).send("Error retrieving rooms");
+        }
+
+        const roomsWithTime = result.map(room => {
+            const joinedAt = moment(room.joined_at);
+            const timeSinceJoined = moment().diff(joinedAt, 'days'); 
+            let timeString = `${timeSinceJoined} days ago`;
+
+            if (timeSinceJoined >= 30) {
+                const months = moment().diff(joinedAt, 'months');
+                timeString = `${months} months ago`;
+            }
+
+            return {
+                roomName: room.room_name,
+                timeSinceJoined: timeString
+            };
+        });
+
+        res.status(200).json(roomsWithTime);
+    });
+});
 
 app.listen(5000);
 console.log("Working");

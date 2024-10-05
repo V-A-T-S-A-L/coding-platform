@@ -7,7 +7,7 @@ const Nav = () => {
 
     const logout = () => {
         localStorage.clear();
-        navigate('/signup');
+        navigate('/login');
     }
 
     const profilePic = '';
@@ -44,7 +44,7 @@ const Nav = () => {
                     <ul className='nav-ul'>
                         <li><Link style={{ textDecoration: "none", color: "white" }} to="/home">Home</Link></li>
                         <li><Link style={{ textDecoration: "none", color: "white" }} to="/rooms">My Rooms</Link></li>
-                        <li><Link style={{ textDecoration: "none", color: "white" }} onClick={logout} to="/signup">Logout:- {JSON.parse(auth).name}</Link></li>
+                        <li><Link style={{ textDecoration: "none", color: "white" }} onClick={logout} to="/login">Logout:- {JSON.parse(auth).name}</Link></li>
                     </ul>
                 </div>
             </div>

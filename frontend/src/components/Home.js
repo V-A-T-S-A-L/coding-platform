@@ -6,7 +6,7 @@ const Land = () => {
 
     return (
         <div>
-            <div className="home-name">
+            <div className="home-name-default">
                 <div className="brackets">
                     <h1>{'</>'}</h1>
                 </div>
