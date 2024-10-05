@@ -146,7 +146,7 @@ app.get('/user-rooms/:userId', (req, res) => {
     const { userId } = req.params;
 
     const query = `
-        SELECT r.room_name, rm.joined_at 
+        SELECT r.id, r.room_name, rm.joined_at 
         FROM rooms r
         JOIN room_members rm ON r.id = rm.room_id
         WHERE rm.user_id = ?
@@ -168,6 +168,7 @@ app.get('/user-rooms/:userId', (req, res) => {
             }
 
             return {
+                room_id: room.id,
                 roomName: room.room_name,
                 timeSinceJoined: timeString
             };

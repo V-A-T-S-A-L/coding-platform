@@ -15,6 +15,7 @@ function App() {
         <Routes>
           <Route element={<PrivateComponent />}>
             <Route path='/home' element={<PostLoginhome />}/>
+            <Route path='room/:room_id' element={<h1 style={{color: "white"}}>room</h1>}/>
           </Route>
           <Route path='/' element={<Land />}/>
           <Route path='/signup' element={<Signup />}/>

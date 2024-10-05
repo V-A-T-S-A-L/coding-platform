@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from 'axios';
 import './home.css';
 import Footer from "./Footer";
@@ -99,7 +100,7 @@ const PostLoginhome = () => {
                                     <p>{room.timeSinceJoined}</p>
                                 </div>
                                 <div className="arrow">
-                                    <h1>&#10140;</h1>
+                                    <Link style={{textDecoration: "none", color: "white"}} to={`/room/${room.room_id}`}><h1>&#10140;</h1></Link>
                                 </div>
                             </div>
                         ))
