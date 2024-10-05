@@ -9,8 +9,9 @@
 /* Sidebar styling */
 .sidebar {
     width: 3%;
-    background-color: #1a1a1a; /* Dark gray */
+    background-color: #fff; /* Dark gray */
     border-radius: 10px;
+    color: #000;
     height: 78vh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow-x: hidden;
@@ -38,7 +39,7 @@
 }
 
 .sidebar ul li:hover {
-    background-color: #444; /* Slightly lighter on hover */
+    background-color: #c5c5c5; /* Slightly lighter on hover */
 }
 
 /* Problems table container styling */
@@ -48,10 +49,13 @@
 }
 
 .problems-card {
-    background-color: #1a1a1a; /* Dark gray card */
+    background-color: #000; /* Dark gray card */
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px dashed #fff;
+    overflow-y: scroll;
+    max-height: 73vh;
 }
 
 .problems-card h2 {
@@ -67,16 +71,21 @@ table {
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #000;
 }
 
 th {
     color: white;
-    border-top: 1px solid #333;
+    border-top: 1px solid #000;
+    background-color: #080808;
 }
 
 td {
-    color: #ddd;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #080808;
 }
 
 /* Top scorers card styling */
@@ -84,10 +93,26 @@ td {
     width: 30%;
 }
 
+.top-3 {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.top-3-card {
+    padding: 10px;
+    background-color: #333;
+    width: 20%;
+    border-radius: 15px;
+    -webkit-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+    -moz-box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+    box-shadow: -12px 17px 25px -12px rgba(0,0,0,0.75);
+}
+
 .top-scorers-card {
     background-color: #1a1a1a; /* Dark gray card */
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     height: auto;
 }
@@ -125,10 +150,10 @@ td {
 .svg-icon path,
 .svg-icon polygon,
 .svg-icon rect {
-  fill: #fff;
+  fill: #000;
 }
 
 .svg-icon circle {
-  stroke: #fff;
+  stroke: #000;
   stroke-width: 1;
 }
