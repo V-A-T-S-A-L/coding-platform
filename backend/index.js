@@ -242,5 +242,21 @@ app.post('/create-challenge/:roomId', (req, res) => {
     });
 });
 
+// Get problems inside a room
+
+app.get('/get-problems/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT * FROM challenges
+        WHERE room_id = ?
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send(result)
+    });
+});
+
 app.listen(5000);
 console.log("Working");

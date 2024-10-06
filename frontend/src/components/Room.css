@@ -78,10 +78,12 @@ th {
     color: white;
     border-top: 1px solid #000;
     background-color: #080808;
+    text-align: center;
 }
 
 td {
     color: white;
+    text-align: center;
 }
 
 tr:nth-child(even) {
