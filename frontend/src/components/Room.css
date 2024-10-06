@@ -110,8 +110,9 @@ tr:nth-child(even) {
 }
 
 .top-scorers-card {
-    background-color: #1a1a1a; /* Dark gray card */
+    background-color: #080808; /* Dark gray card */
     padding: 20px;
+    border: 1px dashed white;
     border-radius: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     height: auto;

@@ -116,7 +116,7 @@ const Room = () => {
             {/* Top Scorers */}
             <div className="top-scorers-container">
                 <div className="top-scorers-card">
-                    <h2>Top 3 Scorers</h2>
+                    <h2>Top Scorers</h2>
                     {/* <ul>
                         {topScorers.map((scorer, index) => (
                             <li key={index}>

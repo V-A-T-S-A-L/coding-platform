@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './CreateChallenge.css';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CreateChallenge = ({ roomId }) => {
+const CreateChallenge = () => {
     const [problemName, setProblemName] = useState('');
     const [explanation, setExplanation] = useState('');
     const [difficulty, setDifficulty] = useState('');
@@ -11,6 +12,14 @@ const CreateChallenge = ({ roomId }) => {
         { input: '', output: '' }, { input: '', output: '' }, { input: '', output: '' }, { input: '', output: '' }, { input: '', output: '' }
     ]);
 
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const user_id = user.id;
+    const { room_id } = useParams();
+    console.warn(room_id);
+    const roomId = parseInt(room_id, 10);
+    console.warn(roomId);
+
     const handleSubmit = async () => {
         const challengeData = {
             problemName,
@@ -19,7 +28,7 @@ const CreateChallenge = ({ roomId }) => {
             deadline,
             exampleTestCases,
             hiddenTestCases,
-            roomId
+            created_by: user_id
         };
 
         try {
@@ -31,6 +40,7 @@ const CreateChallenge = ({ roomId }) => {
 
             if (response.ok) {
                 alert("Challenge created successfully");
+                navigate(`/room/${roomId}`);
             } else {
                 console.error("Failed to create challenge");
             }
@@ -54,7 +64,8 @@ const CreateChallenge = ({ roomId }) => {
                     </div>
                     <div className="field-group">
                         <label>Difficulty</label>
-                        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} required>
+                            <option value="">Select Difficulty</option>
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>

@@ -57,6 +57,25 @@ db.query(`
     );
 `);
 
+// Challenges schema
+
+db.query(`
+    CREATE TABLE IF NOT EXISTS challenges (
+        challenge_id INT AUTO_INCREMENT PRIMARY KEY,
+        problem_name VARCHAR(255) NOT NULL,
+        explanation TEXT NOT NULL,
+        difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
+        deadline DATE NOT NULL,
+        example_test_cases JSON NOT NULL,
+        hidden_test_cases JSON NOT NULL,
+        room_id INT NOT NULL,
+        created_by INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    );    
+`)
+
 // Signup route
 app.post('/signup', (req, res) => {
     const { name, password, email, profilePic } = req.body;
@@ -159,7 +178,7 @@ app.get('/user-rooms/:userId', (req, res) => {
 
         const roomsWithTime = result.map(room => {
             const joinedAt = moment(room.joined_at);
-            const timeSinceJoined = moment().diff(joinedAt, 'days'); 
+            const timeSinceJoined = moment().diff(joinedAt, 'days');
             let timeString = `${timeSinceJoined} days ago`;
 
             if (timeSinceJoined >= 30) {
@@ -188,8 +207,38 @@ app.get('/get-room/:room_id', (req, res) => {
     `;
 
     db.query(query, [room_id], (err, result) => {
-        if(err) return res.status(500).send("Error fetching data");
+        if (err) return res.status(500).send("Error fetching data");
         res.status(200).send(result[0])
+    });
+});
+
+// Create new challenge 
+
+app.post('/create-challenge/:roomId', (req, res) => {
+    const { roomId } = req.params;
+    const { problemName, explanation, difficulty, deadline, exampleTestCases, hiddenTestCases, created_by } = req.body;
+
+    const query = `
+        INSERT INTO challenges (problem_name, explanation, difficulty, deadline, example_test_cases, hidden_test_cases, room_id, created_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(query, [
+        problemName,
+        explanation,
+        difficulty,
+        deadline,
+        JSON.stringify(exampleTestCases),
+        JSON.stringify(hiddenTestCases),
+        roomId,
+        created_by
+    ], (err, result) => {
+        if (err) {
+            console.error('Error inserting challenge:', err);
+            res.status(500).json({ message: 'Failed to create challenge' });
+        } else {
+            res.status(201).json({ message: 'Challenge created successfully', challengeId: result.insertId });
+        }
     });
 });
 
