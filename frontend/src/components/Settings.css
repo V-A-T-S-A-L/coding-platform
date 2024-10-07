@@ -1,0 +1,9 @@
+.settings-container {
+    background-color: #000;
+    color: white;
+    height: 78vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+}

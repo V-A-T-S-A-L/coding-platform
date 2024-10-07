@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import './Room.css';
 import axios from 'axios';
 import { json, Link, useParams } from 'react-router-dom';
+import './Settings.css';
 
-const Room = () => {
+const Settings = () => {
 
-    const [roomData, setRoomData] = useState({});
-    const [problems, setProblems] = useState([]);
     const { room_id } = useParams();
     const user = JSON.parse(localStorage.getItem('user'));
     const user_id = user.id;
     const [isAdmin, setIsAdmin] = useState(false);
+    const [roomData, setRoomData] = useState({});
 
     useEffect(() => {
         const checkAdmin = async () => {
@@ -26,29 +25,12 @@ const Room = () => {
 
         }
 
-        const getProblems = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/get-problems/${room_id}`);
-                setProblems(response.data);
-            } catch (error) {
-                console.warn("Error fetching problems", error);
-            }
-        }
-
         checkAdmin();
-        getProblems();
 
-    }, [room_id, roomData, user_id, problems]);
-
-    const topScorers = [
-        { name: 'User 1', score: 250 },
-        { name: 'User 2', score: 200 },
-        { name: 'User 3', score: 180 }
-    ];
+    }, [room_id, roomData, user_id]);
 
     return (
-        <div className="room-page-container">
-            {/* Sidebar */}
+        <div className='settings-container'>
             <div className="sidebar">
                 <ul>
                     <li><svg class="svg-icon" viewBox="0 0 20 20">
@@ -83,59 +65,37 @@ const Room = () => {
                     </li></Link>}
                 </ul>
             </div>
+            <div class="left-column">
+                <div class="card room-settings">
+                    <h3>Room Settings</h3>
+                    <form id="room-settings-form">
+                        <label for="room-name">Change Room Name:</label>
+                        <input type="text" id="room-name" name="room-name" placeholder="Enter new room name"></input>
+                        <button type="submit">Save Changes</button>
+                    </form>
+                </div>
 
-            {/* Problems Table */}
-            <div className="problems-container">
-                <div className="problems-card">
-                    <h2 style={{ color: "white" }}>Problems</h2>
-                    {problems.length > 0 ? (<table>
-                        <thead>
-                            <tr>
-                                <th>Problem</th>
-                                <th>Status</th>
-                                <th>Difficulty</th>
-                                <th>Deadline</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {problems.map((problem, index) => (
-                                <tr key={index}>
-                                    <td>{problem.problem_name}</td>
-                                    <td>Unsolved</td>
-                                    <td>{problem.difficulty}</td>
-                                    <td>{problem.deadline.split("T")[0]}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>) : (
-                        <h4>No challenges have been created yet</h4>
-                    )}
+                <div class="card room-code">
+                    <h3>Room Code</h3>
+                    <p id="room-code">ABC123</p>
+                    <button onclick="copyRoomCode()">Copy Code</button>
                 </div>
             </div>
 
-            {/* Top Scorers */}
-            <div className="top-scorers-container">
-                <div className="top-scorers-card">
-                    <h2>Top Scorers</h2>
-                    {/* <ul>
-                        {topScorers.map((scorer, index) => (
-                            <li key={index}>
-                                {index + 1}. {scorer.name} - {scorer.score} pts
-                            </li>
-                        ))}
-                    </ul> */}
-                    <div className='top-3'>
-                        {topScorers.map((scorer, index) => (
-                            <div key={index} className='top-3-card'>
-                                <p>{scorer.name}</p>
-                                <p>{scorer.score} pts</p>
-                            </div>
-                        ))}
-                    </div>
+            <div class="right-column">
+                <div class="card members-list">
+                    <h3>Room Members</h3>
+                    <ul>
+                        <li>
+                            <span class="member-name">John Doe</span>
+                            <span class="member-email">john@example.com</span>
+                            <button class="remove-btn">Remove</button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Room;
+export default Settings;
