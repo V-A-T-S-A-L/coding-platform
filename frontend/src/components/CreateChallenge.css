@@ -17,12 +17,13 @@
 }
 
 .card {
-    background-color: white;
-    border: 1px dashed #000;
-    color: black;
+    background-color: #000;
+    border: 1px dashed #fff;
+    color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1px;
 }
 
 .field-group {
@@ -40,26 +41,28 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    color: #000;
 }
 
 .submit-btn {
-    background-color: #000;
-    color: white;
+    background-color: #fff;
+    color: #000;
     padding: 10px 20px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    width: 100%;
+    width: 93%;
+    align-items: center;
     margin-top: 20px;
     align-self: center;
 }
 
 .submit-btn:hover {
-    background-color: #161616;
+    background-color: #999;
 }
 
 .sidebar {
-    width: 3%;
+    width: 12%;
     background-color: #fff; /* Dark gray */
     border-radius: 10px;
     color: #000;

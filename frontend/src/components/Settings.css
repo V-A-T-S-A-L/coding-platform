@@ -7,3 +7,59 @@
     justify-content: space-between;
     padding: 20px;
 }
+
+.change-room-name {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    align-items: center;
+}
+
+.change-room-name input {
+    padding: 5px;
+    width: 70%;
+    border-radius: 5px;
+    border: none;
+}
+
+.change-room-name button {
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    background-color: #080808;
+    cursor: pointer;
+    border: 1px solid #fff;
+    min-width: 15%;
+}
+
+.deletion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.deletion button {
+    padding: 5px;
+    background-color: #000;
+    border: none;
+    width: 20%;
+    cursor: pointer;
+}
+
+.svg-icon-del {
+    width: 1em;
+    height: 1em;
+    transform: scale(1.5);
+}
+
+.svg-icon-del path,
+.svg-icon-del polygon,
+.svg-icon-del rect {
+  fill: red;
+}
+
+.svg-icon-del circle {
+  stroke: red;
+  stroke-width: 1;
+}

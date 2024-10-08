@@ -8,7 +8,7 @@
 
 /* Sidebar styling */
 .sidebar {
-    width: 3%;
+    width: 12%;
     background-color: #fff; /* Dark gray */
     border-radius: 10px;
     color: #000;
@@ -44,8 +44,8 @@
 
 /* Problems table container styling */
 .problems-container {
-    width: 70%;
-    margin: 0 20px;
+    width: 50%;
+    margin: 0 40px;
 }
 
 .problems-card {
