@@ -258,5 +258,21 @@ app.get('/get-problems/:room_id', (req, res) => {
     });
 });
 
+// Update room name
+
+app.put('/update-room-name/:room_id', (req, res) => {
+    const { id, room_name } = req.body;
+
+    const query = `
+        UPDATE rooms SET room_name = ?
+        WHERE id = ?
+    `;
+
+    db.query(query, [room_name, id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send(result);
+    })
+})
+
 app.listen(5000);
 console.log("Working");
