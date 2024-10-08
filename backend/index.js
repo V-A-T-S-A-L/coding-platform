@@ -258,6 +258,29 @@ app.get('/get-problems/:room_id', (req, res) => {
     });
 });
 
+// Get members in a room
+
+app.get('/get-members/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT u.name, u.email, r.joined_at
+        FROM room_members r
+        JOIN users u
+        ON u.id = r.user_id
+        WHERE r.room_id = ?
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if(err) res.status(500).send("Error fetching data");
+        if(result.length > 0) {
+            res.status(200).send(result);
+        } else {
+            res.status(404).send("No users found");
+        }
+    })
+})
+
 // Update room name
 
 app.put('/update-room-name/:room_id', (req, res) => {

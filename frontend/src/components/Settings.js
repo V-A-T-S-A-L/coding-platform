@@ -11,34 +11,48 @@ const Settings = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [roomData, setRoomData] = useState({});
     const [roomName, setRoomName] = useState('');
+    const [blankName, setBlankName] = useState(false);
+    const [members, setMembers] = useState([]);
 
     useEffect(() => {
         const checkAdmin = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
                 setRoomData(response.data);
-            }
-            catch (error) {
+            } catch (error) {
                 console.warn(error);
             };
 
             if (roomData.admin_id === user_id) setIsAdmin(true);
         }
 
+        const getMembers = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/get-members/${room_id}`);
+                setMembers(response.data);
+            } catch (error) {
+                console.warn(error);
+            }
+        }
+
         checkAdmin();
+        getMembers();
 
     }, [room_id, roomData, user_id]);
 
     const updateRoomName = async () => {
-        console.warn(roomName);
+
+        if (!roomName) {
+            setBlankName(true);
+            return;
+        };
 
         try {
             const result = await axios.put(`http://localhost:5000/update-room-name/${room_id}`, {
-                id: room_id, 
+                id: room_id,
                 room_name: roomName
             });
-            alert("Room name updated successfully");
-        } catch(error) {
+        } catch (error) {
             alert("Error updating room name");
             console.warn(error);
         }
@@ -52,11 +66,11 @@ const Settings = () => {
         <div className='settings-container'>
             <div className="sidebar">
                 <ul>
-                    <li><svg class="svg-icon" viewBox="0 0 20 20">
+                    <Link to={`/room/${room_id}`} style={{ textDecoration: "none", color: "black" }}><li><svg class="svg-icon" viewBox="0 0 20 20">
                         <path d="M18.121,9.88l-7.832-7.836c-0.155-0.158-0.428-0.155-0.584,0L1.842,9.913c-0.262,0.263-0.073,0.705,0.292,0.705h2.069v7.042c0,0.227,0.187,0.414,0.414,0.414h3.725c0.228,0,0.414-0.188,0.414-0.414v-3.313h2.483v3.313c0,0.227,0.187,0.414,0.413,0.414h3.726c0.229,0,0.414-0.188,0.414-0.414v-7.042h2.068h0.004C18.331,10.617,18.389,10.146,18.121,9.88 M14.963,17.245h-2.896v-3.313c0-0.229-0.186-0.415-0.414-0.415H8.342c-0.228,0-0.414,0.187-0.414,0.415v3.313H5.032v-6.628h9.931V17.245z M3.133,9.79l6.864-6.868l6.867,6.868H3.133z"></path>
                     </svg>
                         Home
-                    </li>
+                    </li></Link>
                     <li><svg class="svg-icon" viewBox="0 0 20 20">
                         <path d="M17.211,3.39H2.788c-0.22,0-0.4,0.18-0.4,0.4v9.614c0,0.221,0.181,0.402,0.4,0.402h3.206v2.402c0,0.363,0.429,0.533,0.683,0.285l2.72-2.688h7.814c0.221,0,0.401-0.182,0.401-0.402V3.79C17.612,3.569,17.432,3.39,17.211,3.39M16.811,13.004H9.232c-0.106,0-0.206,0.043-0.282,0.117L6.795,15.25v-1.846c0-0.219-0.18-0.4-0.401-0.4H3.189V4.19h13.622V13.004z"></path>
                     </svg>
@@ -92,6 +106,7 @@ const Settings = () => {
                         <input value={roomName} onChange={(e) => { setRoomName(e.target.value) }} type="text" id="room-name" name="room-name" placeholder="Enter new room name"></input>
                         <button onClick={updateRoomName} type="submit">Save Changes</button>
                     </div>
+                    {blankName && <label style={{ color: "red" }}>&#9888;&nbsp; Room name cannot be empty</label>}
                     <br></br>
                     <h3>Room Code</h3>
                     <label style={{ color: "#9f9f9f", fontStyle: "italic" }}>This is your unique room code. Share it with others to give them access :{')'}</label>
@@ -149,19 +164,22 @@ const Settings = () => {
                             <th>Date-of-Joining</th>
                             <th>Remove</th>
                         </tr>
-                        <tr>
-                            <td>Vatsal</td>
-                            <td>vatsalshah004@gmail.com</td>
-                            <td>2024-10-04</td>
-                            <td><button><svg class="svg-icon-del" viewBox="0 0 20 20">
-                                <path fill="none" d="M7.083,8.25H5.917v7h1.167V8.25z M18.75,3h-5.834V1.25c0-0.323-0.262-0.583-0.582-0.583H7.667
-								c-0.322,0-0.583,0.261-0.583,0.583V3H1.25C0.928,3,0.667,3.261,0.667,3.583c0,0.323,0.261,0.583,0.583,0.583h1.167v14
-								c0,0.644,0.522,1.166,1.167,1.166h12.833c0.645,0,1.168-0.522,1.168-1.166v-14h1.166c0.322,0,0.584-0.261,0.584-0.583
-								C19.334,3.261,19.072,3,18.75,3z M8.25,1.833h3.5V3h-3.5V1.833z M16.416,17.584c0,0.322-0.262,0.583-0.582,0.583H4.167
-								c-0.322,0-0.583-0.261-0.583-0.583V4.167h12.833V17.584z M14.084,8.25h-1.168v7h1.168V8.25z M10.583,7.083H9.417v8.167h1.167V7.083
-								z"></path>
-                            </svg></button></td>
-                        </tr>
+                        {members.map((member, index) => (
+                            <tr>
+                                <td>{member.name}</td>
+                                <td>vatsalshah004@gmail.com</td>
+                                <td>2024-10-04</td>
+                                <td><button><svg class="svg-icon-del" viewBox="0 0 20 20">
+                                    <path fill="none" d="M7.083,8.25H5.917v7h1.167V8.25z M18.75,3h-5.834V1.25c0-0.323-0.262-0.583-0.582-0.583H7.667
+						    		c-0.322,0-0.583,0.261-0.583,0.583V3H1.25C0.928,3,0.667,3.261,0.667,3.583c0,0.323,0.261,0.583,0.583,0.583h1.167v14
+						    		c0,0.644,0.522,1.166,1.167,1.166h12.833c0.645,0,1.168-0.522,1.168-1.166v-14h1.166c0.322,0,0.584-0.261,0.584-0.583
+						    		C19.334,3.261,19.072,3,18.75,3z M8.25,1.833h3.5V3h-3.5V1.833z M16.416,17.584c0,0.322-0.262,0.583-0.582,0.583H4.167
+						    		c-0.322,0-0.583-0.261-0.583-0.583V4.167h12.833V17.584z M14.084,8.25h-1.168v7h1.168V8.25z M10.583,7.083H9.417v8.167h1.167V7.083
+						    		z"></path>
+                                </svg></button>
+                                </td>
+                            </tr>
+                        ))}
                     </table>
                 </div>
             </div>
