@@ -64,3 +64,21 @@
   stroke-width: 1;
 }
 
+.member-table {
+    border-collapse: collapse;
+}
+
+.member-table tr, th {
+    border-collapse: collapse;
+    background-color: #080808;
+}
+
+.member-table tr:nth-child(even) {
+    background-color: #000;
+}
+
+.member-table button {
+    background-color: transparent;
+    border: #000;
+    cursor: pointer;
+}

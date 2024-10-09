@@ -264,7 +264,7 @@ app.get('/get-members/:room_id', (req, res) => {
     const { room_id } = req.params;
 
     const query = `
-        SELECT u.name, u.email, r.joined_at
+        SELECT u.name, u.id, u.email, r.joined_at
         FROM room_members r
         JOIN users u
         ON u.id = r.user_id
