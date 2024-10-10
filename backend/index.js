@@ -297,5 +297,21 @@ app.put('/update-room-name/:room_id', (req, res) => {
     })
 })
 
+// Get challenge data
+
+app.get('/get-challenge-data/:challenge_id', (req, res) => {
+    const { challenge_id} = req.params;
+
+    const query = `
+        SELECT * FROM challenges
+        WHERE challenge_id = ?
+    `;
+
+    db.query(query, [challenge_id], (err, result) => {
+        if(err) return res.status(500).send("Error fetching data");
+        res.status(200).send(result[0]);
+    })
+})
+
 app.listen(5000);
 console.log("Working");

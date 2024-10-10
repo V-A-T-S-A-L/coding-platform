@@ -9,6 +9,7 @@ import PostLoginhome from './components/PostLoginHome';
 import CreateChallenge from './components/NewProblem';
 import Room from './components/Room';
 import Settings from './components/Settings';
+import CodeSubmissionPage from './components/CodeSubmissionPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path='/room/:room_id' element={<Room />}/>
             <Route path='/room/:room_id/create-challenge' element={<CreateChallenge />}/>
             <Route path='/room/:room_id/settings' element={<Settings />}/>
+            <Route path='/room/:room_id/:challenge_id' element={<CodeSubmissionPage />} />
           </Route>
           <Route path='/' element={<Land />}/>
           <Route path='/signup' element={<Signup />}/>

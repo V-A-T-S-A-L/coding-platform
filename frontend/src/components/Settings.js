@@ -59,18 +59,20 @@ const Settings = () => {
     }
 
     const copyCode = () => {
-        // var roomCode = roomData.room_code;
-        // navigator.clipboard.writeText(roomCode).then(() => {
-        //     alert("Room code copied to clipboard");
-        // });
-
-        try {
-            navigator.clipboard.writeText(roomData.room_code);
-            alert("copied");
-        } catch(error) {
-            alert("couldn't copy");
+        const roomCode = roomData.room_code; // Assuming roomData has room_code
+        if (!roomCode) {
+            alert("Room code not found");
+            return;
         }
-    }
+
+        navigator.clipboard.writeText(roomCode)
+            .then(() => {
+                alert("Room code copied to clipboard!");
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+    };
 
     return (
         <div className='settings-container'>

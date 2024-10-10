@@ -100,7 +100,7 @@ const Room = () => {
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
-                                    <td>{problem.problem_name}</td>
+                                    <td><Link style={{textDecoration: "none", color: "white"}} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.problem_name}</Link></td>
                                     <td>Unsolved</td>
                                     <td>{problem.difficulty}</td>
                                     <td>{problem.deadline.split("T")[0]}</td>
