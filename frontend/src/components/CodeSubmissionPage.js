@@ -1,14 +1,16 @@
-// CodeSubmissionPage.js
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import Editor from '@monaco-editor/react';
+import SplitPane from 'react-split-pane';
+import axios from 'axios';
+import './codeSubmit.css'; // Add your styling here
 
 const CodeSubmissionPage = () => {
     const { room_id, challenge_id } = useParams();
     const [code, setCode] = useState('// Write your code here');
     const [language, setLanguage] = useState('java');
     const [output, setOutput] = useState('');
+
     const [challengeData, setChallengeData] = useState([]);
 
     useEffect(() => {
@@ -16,58 +18,112 @@ const CodeSubmissionPage = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-challenge-data/${challenge_id}`);
                 setChallengeData(response.data);
-            } catch(error) {
-                console.warn("Error fetching code data",error);
+            } catch (error) {
+                console.warn("Error fetching code data", error);
             }
         }
 
         getData();
     }, [challenge_id])
 
+    // Handle code change in editor
     const handleCodeChange = (value) => {
         setCode(value);
     };
 
-    const handleSubmit = async () => {
-        console.log(`Room ID: ${room_id}`);
-        console.log(`Challenge ID: ${challenge_id}`);
-        console.log(`Code: ${code}`);
-        console.log(`Language: ${language}`);
+    // Run Code
+    const handleRun = () => {
+        console.log("Running code...");
+        setOutput('Test cases passed: 3/3 (Run Output)');
+    };
 
-        setOutput('Test cases passed: 3/3');
+    // Compile Code
+    const handleCompile = () => {
+        console.log("Compiling code...");
+        setOutput('Code compiled successfully! No errors.');
     };
 
     return (
-        <div style={{ padding: '20px', color: 'white', backgroundColor: 'black' }}>
-            <h2>Submit Code for Challenge: {challenge_id} in Room: {room_id}</h2>
-            <div style={{ height: '400px', marginBottom: '20px' }}>
-                <Editor
-                    height="100%"
-                    theme="vs-dark"
-                    defaultLanguage={language}
-                    value={code}
-                    onChange={handleCodeChange}
-                />
-            </div>
-            <button
-                onClick={handleSubmit}
-                style={{
-                    padding: '10px 20px',
-                    cursor: 'pointer',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px'
-                }}
-            >
-                Submit Code
-            </button>
-            {output && (
-                <div style={{ marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
-                    <h3>Output:</h3>
-                    <pre>{output}</pre>
+        <div className="code-submission-page">
+            <SplitPane split="vertical" minSize={400} defaultSize="45%" className="split-pane">
+                {/* Left Column - Problem Explanation */}
+                <div className="problem-explanation" style={{ padding: '20px' }}>
+                    <h2>Problem: {challenge_id}</h2>
+                    <p>Detailed problem explanation goes here...</p>
+                    <h3>Example:</h3>
+                    <pre>
+                        Input: 1, 2, 3
+                        <br />
+                        Output: 6
+                    </pre>
                 </div>
-            )}
+
+                {/* Right Column - Code Editor */}
+                <div className="code-editor-section" style={{ padding: '20px' }}>
+                    {/* Language Selector */}
+                    <div style={{ marginBottom: '10px' }}>
+                        <label htmlFor="language">Select Language: </label>
+                        <select
+                            id="language"
+                            value={language}
+                            onChange={(e) => setLanguage(e.target.value)}
+                        >
+                            <option value="java">Java</option>
+                            <option value="python">Python</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+
+                    {/* Monaco Editor */}
+                    <Editor
+                        height="400px"
+                        theme="vs-dark"
+                        defaultLanguage={language}
+                        value={code}
+                        onChange={handleCodeChange}
+                    />
+
+                    {/* Buttons for Run and Compile */}
+                    <div style={{ marginTop: '10px' }}>
+                        <button
+                            onClick={handleRun}
+                            style={{
+                                marginRight: '10px',
+                                padding: '10px 20px',
+                                backgroundColor: '#4CAF50',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Run Code
+                        </button>
+
+                        <button
+                            onClick={handleCompile}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#008CBA',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Compile Code
+                        </button>
+                    </div>
+
+                    {/* Output Section */}
+                    {output && (
+                        <div style={{ marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+                            <h3>Output:</h3>
+                            <pre>{output}</pre>
+                        </div>
+                    )}
+                </div>
+            </SplitPane>
         </div>
     );
 };
