@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { json, Link, useParams } from 'react-router-dom';
+import { json, Link, useNavigate, useParams } from 'react-router-dom';
 import './Settings.css';
 
 const Settings = () => {
@@ -13,19 +13,25 @@ const Settings = () => {
     const [roomName, setRoomName] = useState('');
     const [blankName, setBlankName] = useState(false);
     const [members, setMembers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkAdmin = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
                 setRoomData(response.data);
+
+                if(response.data.admin_id === user_id) {
+                    setIsAdmin(true);
+                } else {
+                    navigate(`/room/${room_id}`);
+                }
+
             } catch (error) {
                 console.warn(error);
             };
-
-            if (roomData.admin_id === user_id) setIsAdmin(true);
         }
-
+        
         const getMembers = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-members/${room_id}`);
@@ -37,9 +43,9 @@ const Settings = () => {
 
         checkAdmin();
         getMembers();
-
+        
     }, [room_id, roomData, user_id]);
-
+    
     const updateRoomName = async () => {
 
         if (!roomName) {

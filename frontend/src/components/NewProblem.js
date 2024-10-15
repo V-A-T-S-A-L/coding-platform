@@ -28,13 +28,16 @@ const CreateChallenge = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
                 setRoomData(response.data);
+
+                if(response.data.admin_id === user_id) {
+                    setIsAdmin(true);
+                } else {
+                    navigate(`/room/${room_id}`);
+                }
             }
             catch (error) {
                 console.warn(error);
             };
-
-            if (roomData.admin_id === user_id) setIsAdmin(true);
-
         }
         checkAdmin();
     }, [room_id, roomData, user_id]);
