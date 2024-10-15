@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { json, useParams } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import SplitPane from 'react-split-pane';
 import axios from 'axios';
@@ -10,14 +10,16 @@ const CodeSubmissionPage = () => {
     const [code, setCode] = useState('// Write your code here');
     const [language, setLanguage] = useState('java');
     const [output, setOutput] = useState('');
-
     const [challengeData, setChallengeData] = useState([]);
+    const [testCases, setTestCases] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-challenge-data/${challenge_id}`);
                 setChallengeData(response.data);
+                console.warn(response.data);
+                setTestCases(JSON.parse(response.data.example_test_cases));
             } catch (error) {
                 console.warn("Error fetching code data", error);
             }
@@ -47,15 +49,17 @@ const CodeSubmissionPage = () => {
         <div className="code-submission-page">
             <SplitPane split="vertical" minSize={400} defaultSize="45%" className="split-pane">
                 {/* Left Column - Problem Explanation */}
-                <div className="problem-explanation" style={{ padding: '20px' }}>
-                    <h2>Problem: {challenge_id}</h2>
-                    <p>Detailed problem explanation goes here...</p>
+                <div className="problem-explanation">
+                    <h2>Problem: {challengeData.problem_name}</h2>
+                    <p>Explanation: {challengeData.explanation}</p>
                     <h3>Example:</h3>
-                    <pre>
-                        Input: 1, 2, 3
-                        <br />
-                        Output: 6
-                    </pre>
+                    {testCases.map((testCase, index) => (
+                        <pre>
+                            Input: {testCase.input}
+                            <br />
+                            Output: {testCase.output}
+                        </pre>
+                    ))}
                 </div>
 
                 {/* Right Column - Code Editor */}
