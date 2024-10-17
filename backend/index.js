@@ -317,61 +317,86 @@ app.get('/get-challenge-data/:challenge_id', (req, res) => {
 
 // Run code
 app.post('/execute', async (req, res) => {
-    const { code, input } = req.body;
+    const { code, exampleTestCases } = req.body;  // Expect an array of test cases
     const judge0BaseUrl = 'https://judge0-ce.p.rapidapi.com/submissions';
     const apiKey = process.env.JUDGE0_API_KEY;
-    //const apiKey = '209e1dba9cmshde344ca810ab1f6p1ab19cjsne595eb938dfb';
-    // Prepare the payload for Judge0 API
-    const options = {
-        method: 'POST',
-        url: judge0BaseUrl,
-        headers: {
-            'content-type': 'application/json',
-            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-            'X-RapidAPI-Key': apiKey,
-        },
-        data: {
-            source_code: code,
-            language_id: 62, // Java language ID for Judge0
-            stdin: input,
-        },
+
+    // Helper function to delay polling
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Function to submit code to Judge0 and get the result
+    const executeTestCase = async (input) => {
+        // Prepare the payload for Judge0 API
+        const options = {
+            method: 'POST',
+            url: judge0BaseUrl,
+            headers: {
+                'content-type': 'application/json',
+                'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+                'X-RapidAPI-Key': apiKey,
+            },
+            data: {
+                source_code: code,
+                language_id: 62,  // Java language ID for Judge0
+                stdin: input,
+            },
+        };
+
+        try {
+            // Submit the code and get the token
+            const response = await axios.request(options);
+            const { token } = response.data;
+
+            // Poll for the result with delay
+            const getResult = async () => {
+                const result = await axios.get(`${judge0BaseUrl}/${token}`, {
+                    headers: {
+                        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+                        'X-RapidAPI-Key': apiKey,
+                    },
+                });
+                return result.data;
+            };
+
+            let resultData = await getResult();
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            // Poll until result is ready or until max attempts
+            while (resultData.status.id <= 2 && attempts < maxAttempts) {
+                await delay(1000); // Wait for 1 second between each poll
+                resultData = await getResult();
+                attempts++;
+            }
+
+            return resultData;
+        } catch (error) {
+            throw new Error('Failed to execute code');
+        }
     };
 
     try {
-        // Make a POST request to submit the code
-        const response = await axios.request(options);
-        const { token } = response.data;
-
-        // Polling function to get the result with a delay
-        const getResult = async () => {
-            const result = await axios.get(`${judge0BaseUrl}/${token}`, {
-                headers: {
-                    'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-                    'X-RapidAPI-Key': apiKey,
-                },
+        // Collect results for all example test cases
+        const results = [];
+        for (const testCase of exampleTestCases) {
+            const result = await executeTestCase(testCase.input);
+            results.push({
+                input: testCase.input,
+                output: result.stdout || result.stderr || result.compile_output || 'Error',
+                status: result.status.description,
+                execution_time: result.time || 'N/A',
+                memory: result.memory ? `${result.memory} KB` : 'N/A',
             });
-            return result.data;
-        };
-
-        // Poll for the result with delay
-        let resultData = await getResult();
-        let attempts = 0;
-        const maxAttempts = 5;
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        // Wait for the result, check status.id > 2 means completed
-        while (resultData.status.id <= 2 && attempts < maxAttempts) {
-            resultData = await getResult();
-            attempts++;
         }
 
-        // Send the final result back to the client
-        res.json(resultData);
+        // Return the combined results for all test cases
+        res.json({ results });
     } catch (error) {
         console.error('Execution Error:', error);
         res.status(500).json({ error: 'Failed to execute code' });
     }
 });
+
 
 
 app.listen(5000);

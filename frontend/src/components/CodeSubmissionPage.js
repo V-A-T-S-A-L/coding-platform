@@ -103,32 +103,31 @@ const CodeSubmissionPage = () => {
     };
 
     const handleSubmit = async () => {
-
-        const input = "2 3";
-
+        const exampleTestCases = testCases;
+    
         const payload = {
             code,
-            input
+            exampleTestCases  // Pass the array of test cases
         };
-
+    
         try {
             const response = await axios.post('http://localhost:5000/execute', payload);
             const result = response.data;
-
-            if (result.stdout) {
-                setOutput(result.stdout);
-            } else if (result.stderr) {
-                setOutput(result.stderr);
+    
+            if (result.results && result.results.length > 0) {
+                const outputs = result.results.map((r, idx) => 
+                    `Test Case ${idx + 1}:\nInput: ${r.input}\nOutput: ${r.output}\nStatus: ${r.status}\nExecution Time: ${r.execution_time}\nMemory: ${r.memory}\n`
+                ).join("\n");
+    
+                setOutput(outputs);
             } else {
-                setOutput(result.compile_output || 'Error');
+                setOutput('No output received');
             }
-
-            setExecutionTime(result.time || 'N/A');
-            setMemory(result.memory ? `${result.memory} KB` : 'N/A');
         } catch (error) {
             setOutput('Failed to execute the code.');
         }
     };
+    
 
     return (
         <div className="code-submission-page">
@@ -206,7 +205,7 @@ const CodeSubmissionPage = () => {
 
                     {/* Output Section */}
                     {output && (
-                        <div style={{ marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+                        <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
                             <h3>Output:</h3>
                             <pre>{output}</pre>
                         </div>
