@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const moment = require('moment');
 const app = express();
-
+const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config();
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -272,8 +274,8 @@ app.get('/get-members/:room_id', (req, res) => {
     `;
 
     db.query(query, [room_id], (err, result) => {
-        if(err) res.status(500).send("Error fetching data");
-        if(result.length > 0) {
+        if (err) res.status(500).send("Error fetching data");
+        if (result.length > 0) {
             res.status(200).send(result);
         } else {
             res.status(404).send("No users found");
@@ -300,7 +302,7 @@ app.put('/update-room-name/:room_id', (req, res) => {
 // Get challenge data
 
 app.get('/get-challenge-data/:challenge_id', (req, res) => {
-    const { challenge_id} = req.params;
+    const { challenge_id } = req.params;
 
     const query = `
         SELECT * FROM challenges
@@ -308,10 +310,69 @@ app.get('/get-challenge-data/:challenge_id', (req, res) => {
     `;
 
     db.query(query, [challenge_id], (err, result) => {
-        if(err) return res.status(500).send("Error fetching data");
+        if (err) return res.status(500).send("Error fetching data");
         res.status(200).send(result[0]);
     })
-})
+});
+
+// Run code
+app.post('/execute', async (req, res) => {
+    const { code, input } = req.body;
+    const judge0BaseUrl = 'https://judge0-ce.p.rapidapi.com/submissions';
+    const apiKey = process.env.JUDGE0_API_KEY;
+    //const apiKey = '209e1dba9cmshde344ca810ab1f6p1ab19cjsne595eb938dfb';
+    // Prepare the payload for Judge0 API
+    const options = {
+        method: 'POST',
+        url: judge0BaseUrl,
+        headers: {
+            'content-type': 'application/json',
+            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+            'X-RapidAPI-Key': apiKey,
+        },
+        data: {
+            source_code: code,
+            language_id: 62, // Java language ID for Judge0
+            stdin: input,
+        },
+    };
+
+    try {
+        // Make a POST request to submit the code
+        const response = await axios.request(options);
+        const { token } = response.data;
+
+        // Polling function to get the result with a delay
+        const getResult = async () => {
+            const result = await axios.get(`${judge0BaseUrl}/${token}`, {
+                headers: {
+                    'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+                    'X-RapidAPI-Key': apiKey,
+                },
+            });
+            return result.data;
+        };
+
+        // Poll for the result with delay
+        let resultData = await getResult();
+        let attempts = 0;
+        const maxAttempts = 5;
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Wait for the result, check status.id > 2 means completed
+        while (resultData.status.id <= 2 && attempts < maxAttempts) {
+            resultData = await getResult();
+            attempts++;
+        }
+
+        // Send the final result back to the client
+        res.json(resultData);
+    } catch (error) {
+        console.error('Execution Error:', error);
+        res.status(500).json({ error: 'Failed to execute code' });
+    }
+});
+
 
 app.listen(5000);
 console.log("Working");

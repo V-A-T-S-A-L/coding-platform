@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { json, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import SplitPane from 'react-split-pane';
 import axios from 'axios';
@@ -10,54 +10,139 @@ const CodeSubmissionPage = () => {
     const [code, setCode] = useState('// Write your code here');
     const [language, setLanguage] = useState('java');
     const [output, setOutput] = useState('');
-    const [challengeData, setChallengeData] = useState([]);
+    const [challengeData, setChallengeData] = useState({});
     const [testCases, setTestCases] = useState([]);
+    const [executionTime, setExecutionTime] = useState('');
+    const [memory, setMemory] = useState('');
+
+    // Judge0 API URL
+    const JUDGE0_API_URL = 'https://api.judge0.com/submissions/?base64_encoded=false&wait=true';
+
+    // Mapping of languages to Judge0 language IDs
+    const languageIDs = {
+        java: 62,
+        python: 71,
+        cpp: 54
+    };
 
     useEffect(() => {
         const getData = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/get-challenge-data/${challenge_id}`);
                 setChallengeData(response.data);
-                console.warn(response.data);
-                setTestCases(JSON.parse(response.data.example_test_cases));
+                setTestCases(JSON.parse(response.data.example_test_cases)); // Parsing the test cases
             } catch (error) {
-                console.warn("Error fetching code data", error);
+                console.warn('Error fetching code data', error);
             }
-        }
+        };
 
         getData();
-    }, [challenge_id])
+    }, [challenge_id]);
 
     // Handle code change in editor
     const handleCodeChange = (value) => {
         setCode(value);
     };
 
-    // Run Code
-    const handleRun = () => {
-        console.log("Running code...");
-        setOutput('Test cases passed: 3/3 (Run Output)');
+    // Compile Code using Judge0
+    const handleCompile = async () => {
+        const submissionData = {
+            source_code: code,
+            language_id: languageIDs[language],
+            stdin: testCases[0]?.input || '', // Example test case input
+        };
+
+        try {
+            const response = await axios.post(JUDGE0_API_URL, submissionData);
+            const { stdout, stderr, compile_output } = response.data;
+
+            if (stderr) {
+                setOutput(`Error: ${stderr}`);
+            } else if (compile_output) {
+                setOutput(`Compilation Error: ${compile_output}`);
+            } else {
+                setOutput(`Output: ${stdout}`);
+            }
+        } catch (error) {
+            console.error('Compilation Error:', error);
+            setOutput('Failed to compile the code.');
+        }
     };
 
-    // Compile Code
-    const handleCompile = () => {
-        console.log("Compiling code...");
-        setOutput('Code compiled successfully! No errors.');
+    // Run Code using Judge0
+    const handleRun = async () => {
+        let testResults = '';
+        for (let i = 0; i < testCases.length; i++) {
+            const submissionData = {
+                source_code: code,
+                language_id: languageIDs[language],
+                stdin: testCases[i].input, // Using test case input
+            };
+
+            try {
+                const response = await axios.post(JUDGE0_API_URL, submissionData);
+                const { stdout, stderr, compile_output } = response.data;
+
+                if (stderr) {
+                    testResults += `Test Case ${i + 1}: Error: ${stderr}\n`;
+                } else if (compile_output) {
+                    testResults += `Test Case ${i + 1}: Compilation Error: ${compile_output}\n`;
+                } else {
+                    const expectedOutput = testCases[i].output.trim();
+                    const actualOutput = stdout.trim();
+                    const result = expectedOutput === actualOutput ? 'Passed' : 'Failed';
+                    testResults += `Test Case ${i + 1}: ${result}\nExpected: ${expectedOutput}\nReceived: ${actualOutput}\n\n`;
+                }
+            } catch (error) {
+                console.error('Execution Error:', error);
+                testResults += `Test Case ${i + 1}: Failed to execute.\n\n`;
+            }
+        }
+
+        setOutput(testResults);
+    };
+
+    const handleSubmit = async () => {
+
+        const input = "2 3";
+
+        const payload = {
+            code,
+            input
+        };
+
+        try {
+            const response = await axios.post('http://localhost:5000/execute', payload);
+            const result = response.data;
+
+            if (result.stdout) {
+                setOutput(result.stdout);
+            } else if (result.stderr) {
+                setOutput(result.stderr);
+            } else {
+                setOutput(result.compile_output || 'Error');
+            }
+
+            setExecutionTime(result.time || 'N/A');
+            setMemory(result.memory ? `${result.memory} KB` : 'N/A');
+        } catch (error) {
+            setOutput('Failed to execute the code.');
+        }
     };
 
     return (
         <div className="code-submission-page">
-            <SplitPane split="vertical" minSize={400} defaultSize="45%" className="split-pane">
+            <SplitPane split="vertical" minSize={400} defaultSize="40%" className="split-pane">
                 {/* Left Column - Problem Explanation */}
                 <div className="problem-explanation">
                     <h2>Problem: {challengeData.problem_name}</h2>
                     <p>Explanation: {challengeData.explanation}</p>
-                    <h3>Example:</h3>
+                    <h3>Example Test Cases:</h3>
                     {testCases.map((testCase, index) => (
-                        <pre>
-                            Input: {testCase.input}
+                        <pre key={index}>
+                            <strong>Input:</strong> {testCase.input}
                             <br />
-                            Output: {testCase.output}
+                            <strong>Output:</strong> {testCase.output}
                         </pre>
                     ))}
                 </div>
@@ -71,6 +156,7 @@ const CodeSubmissionPage = () => {
                             id="language"
                             value={language}
                             onChange={(e) => setLanguage(e.target.value)}
+                            style={{ marginLeft: '10px', padding: '5px' }}
                         >
                             <option value="java">Java</option>
                             <option value="python">Python</option>
@@ -88,17 +174,16 @@ const CodeSubmissionPage = () => {
                     />
 
                     {/* Buttons for Run and Compile */}
-                    <div style={{ marginTop: '10px' }}>
+                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                         <button
-                            onClick={handleRun}
+                            onClick={handleSubmit}
                             style={{
-                                marginRight: '10px',
                                 padding: '10px 20px',
                                 backgroundColor: '#4CAF50',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '5px',
-                                cursor: 'pointer',
+                                cursor: 'pointer'
                             }}
                         >
                             Run Code
@@ -112,7 +197,7 @@ const CodeSubmissionPage = () => {
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '5px',
-                                cursor: 'pointer',
+                                cursor: 'pointer'
                             }}
                         >
                             Compile Code

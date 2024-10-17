@@ -3,11 +3,10 @@
 
 .split-pane {
     position: relative;
-    border: 1px solid red;
 }
 
 .problem-explanation {
-    background-color: #080808;
+    background-color: #000;
     overflow-y: auto;
     padding: 20px;
     color: #fff;
@@ -15,7 +14,7 @@
 }
 
 .code-editor-section {
-    background-color: #080808;
+    background-color: #000;
     overflow-y: auto;
     border-radius: 15px;
     color: #fff;
