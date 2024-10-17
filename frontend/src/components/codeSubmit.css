@@ -1,8 +1,10 @@
 .code-submission-page {
+    
 }
 
 .split-pane {
     position: relative;
+    overflow-y: scroll;
 }
 
 .problem-explanation {

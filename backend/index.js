@@ -380,9 +380,11 @@ app.post('/execute', async (req, res) => {
         const results = [];
         for (const testCase of exampleTestCases) {
             const result = await executeTestCase(testCase.input);
+
             results.push({
                 input: testCase.input,
-                output: result.stdout || result.stderr || result.compile_output || 'Error',
+                expectedOutput: testCase.output,
+                yourOutput: result.stdout || result.stderr || result.compile_output || 'Error',
                 status: result.status.description,
                 execution_time: result.time || 'N/A',
                 memory: result.memory ? `${result.memory} KB` : 'N/A',

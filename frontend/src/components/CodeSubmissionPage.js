@@ -104,21 +104,31 @@ const CodeSubmissionPage = () => {
 
     const handleSubmit = async () => {
         const exampleTestCases = testCases;
-    
+
         const payload = {
             code,
             exampleTestCases  // Pass the array of test cases
         };
-    
+
         try {
             const response = await axios.post('http://localhost:5000/execute', payload);
             const result = response.data;
-    
+
             if (result.results && result.results.length > 0) {
-                const outputs = result.results.map((r, idx) => 
-                    `Test Case ${idx + 1}:\nInput: ${r.input}\nOutput: ${r.output}\nStatus: ${r.status}\nExecution Time: ${r.execution_time}\nMemory: ${r.memory}\n`
-                ).join("\n");
-    
+                const outputs = result.results.map((r, idx) => {
+                    const yourOutput = r.yourOutput.trim(); // Trim your output
+                    const expectedOutput = r.expectedOutput.trim(); // Trim expected output
+
+                    const isPassed = yourOutput === expectedOutput; // Check for equality
+
+                    return `Test Case ${idx + 1}:\n` +
+                        `Status: ${isPassed ? 'passed' : 'failed'}\n` +
+                        `Input: ${r.input}\n` +
+                        `Your Output: ${yourOutput}\n` +
+                        `Expected Output: ${expectedOutput}\n` +
+                        `Execution Time: ${r.execution_time}\n`;
+                }).join("\n");
+
                 setOutput(outputs);
             } else {
                 setOutput('No output received');
@@ -127,7 +137,7 @@ const CodeSubmissionPage = () => {
             setOutput('Failed to execute the code.');
         }
     };
-    
+
 
     return (
         <div className="code-submission-page">
@@ -144,28 +154,20 @@ const CodeSubmissionPage = () => {
                             <strong>Output:</strong> {testCase.output}
                         </pre>
                     ))}
+                    {/* Output Section */}
+                    {output && (
+                        <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+                            <h3>Output:</h3>
+                            <pre>{output}</pre>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column - Code Editor */}
                 <div className="code-editor-section" style={{ padding: '20px' }}>
-                    {/* Language Selector */}
-                    <div style={{ marginBottom: '10px' }}>
-                        <label htmlFor="language">Select Language: </label>
-                        <select
-                            id="language"
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
-                            style={{ marginLeft: '10px', padding: '5px' }}
-                        >
-                            <option value="java">Java</option>
-                            <option value="python">Python</option>
-                            <option value="cpp">C++</option>
-                        </select>
-                    </div>
-
                     {/* Monaco Editor */}
                     <Editor
-                        height="400px"
+                        height="600px"
                         theme="vs-dark"
                         defaultLanguage={language}
                         value={code}
@@ -178,9 +180,9 @@ const CodeSubmissionPage = () => {
                             onClick={handleSubmit}
                             style={{
                                 padding: '10px 20px',
-                                backgroundColor: '#4CAF50',
+                                backgroundColor: '#080808',
+                                border: '1px solid white',
                                 color: 'white',
-                                border: 'none',
                                 borderRadius: '5px',
                                 cursor: 'pointer'
                             }}
@@ -192,9 +194,9 @@ const CodeSubmissionPage = () => {
                             onClick={handleCompile}
                             style={{
                                 padding: '10px 20px',
-                                backgroundColor: '#008CBA',
+                                backgroundColor: '#080808',
+                                border: '1px solid white',
                                 color: 'white',
-                                border: 'none',
                                 borderRadius: '5px',
                                 cursor: 'pointer'
                             }}
@@ -202,14 +204,6 @@ const CodeSubmissionPage = () => {
                             Compile Code
                         </button>
                     </div>
-
-                    {/* Output Section */}
-                    {output && (
-                        <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
-                            <h3>Output:</h3>
-                            <pre>{output}</pre>
-                        </div>
-                    )}
                 </div>
             </SplitPane>
         </div>
