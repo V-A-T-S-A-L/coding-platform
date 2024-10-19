@@ -7,9 +7,19 @@ import './codeSubmit.css'; // Add your styling here
 
 const CodeSubmissionPage = () => {
     const { room_id, challenge_id } = useParams();
-    const [code, setCode] = useState('// Write your code here');
+
+    const defaultCode = `import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+
+        // Start code here
+    }
+}`
+
+    const [code, setCode] = useState(defaultCode);
     const [language, setLanguage] = useState('java');
-    const [output, setOutput] = useState('');
+    const [output, setOutput] = useState('Run code to check example test cases');
     const [challengeData, setChallengeData] = useState({});
     const [testCases, setTestCases] = useState([]);
     const [executionTime, setExecutionTime] = useState('');
@@ -103,6 +113,7 @@ const CodeSubmissionPage = () => {
     };
 
     const handleSubmit = async () => {
+        setOutput("Loading..");
         const exampleTestCases = testCases;
 
         const payload = {
@@ -155,12 +166,16 @@ const CodeSubmissionPage = () => {
                         </pre>
                     ))}
                     {/* Output Section */}
-                    {output && (
+                    {/* {output && (
                         <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
                             <h3>Output:</h3>
                             <pre>{output}</pre>
                         </div>
-                    )}
+                    )} */}
+                    <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+                        <h3>Output:</h3>
+                        <pre>{output}</pre>
+                    </div>
                 </div>
 
                 {/* Right Column - Code Editor */}
