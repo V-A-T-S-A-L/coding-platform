@@ -1,5 +1,4 @@
 .code-submission-page {
-    
 }
 
 .split-pane {
@@ -9,7 +8,7 @@
 
 .problem-explanation {
     background-color: #000;
-    overflow-y: auto;
+    overflow-y: scroll;
     padding: 20px;
     color: #fff;
     border-radius: 15px;
@@ -20,6 +19,16 @@
     overflow-y: auto;
     border-radius: 15px;
     color: #fff;
+}
+
+.customTestCaseInput {
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    padding: 10px;
+    background-color: #333;
+    width: 70%;
+    margin-top: 10px;
 }
 
 button {
@@ -34,6 +43,7 @@ pre {
     background-color: #242424;
     padding: 10px;
     border-radius: 5px;
+    overflow-y: visible;
 }
  
 .Resizer {

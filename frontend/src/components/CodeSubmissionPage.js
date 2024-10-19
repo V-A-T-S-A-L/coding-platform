@@ -19,11 +19,13 @@ class Main {
 
     const [code, setCode] = useState(defaultCode);
     const [language, setLanguage] = useState('java');
-    const [output, setOutput] = useState('Run code to check example test cases');
+    const [output, setOutput] = useState('Run code to check examples or custom test cases');
     const [challengeData, setChallengeData] = useState({});
     const [testCases, setTestCases] = useState([]);
     const [executionTime, setExecutionTime] = useState('');
     const [memory, setMemory] = useState('');
+    const [customCase, setCustomCase] = useState('');
+    const [customOutput, setCustomOutpt] = useState('');
 
     // Judge0 API URL
     const JUDGE0_API_URL = 'https://api.judge0.com/submissions/?base64_encoded=false&wait=true';
@@ -114,7 +116,14 @@ class Main {
 
     const handleSubmit = async () => {
         setOutput("Loading..");
-        const exampleTestCases = testCases;
+        const exampleTestCases = [...testCases];
+
+        if(customCase.trim()) {
+            exampleTestCases.push({
+                input: customCase,
+                output: customOutput
+            })
+        }
 
         const payload = {
             code,
@@ -153,7 +162,6 @@ class Main {
     return (
         <div className="code-submission-page">
             <SplitPane split="vertical" minSize={400} defaultSize="40%" className="split-pane">
-                {/* Left Column - Problem Explanation */}
                 <div className="problem-explanation">
                     <h2>Problem: {challengeData.problem_name}</h2>
                     <p>Explanation: {challengeData.explanation}</p>
@@ -165,22 +173,20 @@ class Main {
                             <strong>Output:</strong> {testCase.output}
                         </pre>
                     ))}
-                    {/* Output Section */}
-                    {/* {output && (
-                        <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
-                            <h3>Output:</h3>
-                            <pre>{output}</pre>
+                    <pre>
+                        <h3>Custom Test Case:</h3>
+                        <div style={{display: "flex", flexDirection: "column"}}>
+                            <input value={customCase} onChange={(e) => setCustomCase(e.target.value)} className='customTestCaseInput' type='text' placeholder='Enter input for test case'></input>
+                            <input value={customOutput} onChange={(e) => setCustomOutpt(e.target.value)} className='customTestCaseInput' type='text' placeholder='Enter expected output'></input>
                         </div>
-                    )} */}
+                    </pre>
+
                     <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
                         <h3>Output:</h3>
                         <pre>{output}</pre>
                     </div>
                 </div>
-
-                {/* Right Column - Code Editor */}
                 <div className="code-editor-section" style={{ padding: '20px' }}>
-                    {/* Monaco Editor */}
                     <Editor
                         height="600px"
                         theme="vs-dark"
@@ -188,8 +194,6 @@ class Main {
                         value={code}
                         onChange={handleCodeChange}
                     />
-
-                    {/* Buttons for Run and Compile */}
                     <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                         <button
                             onClick={handleSubmit}
