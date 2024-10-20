@@ -9,6 +9,7 @@
 .problem-explanation {
     background-color: #000;
     overflow-y: scroll;
+    width: 500px;
     padding: 20px;
     color: #fff;
     border-radius: 15px;
@@ -27,8 +28,22 @@
     color: #fff;
     padding: 10px;
     background-color: #333;
+    overflow-y: scroll;
     width: 70%;
     margin-top: 10px;
+}
+
+.editor-div {
+    background-color: #1e1e1e;
+    border: 1px solid white;
+    border-radius: 15px;
+    padding: 8px;
+}
+
+.bar {
+    background-color: #333;
+    height: auto;
+    width: 2px;
 }
 
 button {
@@ -43,13 +58,13 @@ pre {
     background-color: #242424;
     padding: 10px;
     border-radius: 5px;
-    overflow-y: visible;
+    overflow-y: scroll;
 }
  
 .Resizer {
     background: #fff;
     opacity: .2;
-    z-index: 1;
+    z-index: 100;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -58,12 +73,12 @@ pre {
     background-clip: padding-box;
 }
 
- .Resizer:hover {
+.Resizer:hover {
     -webkit-transition: all 2s ease;
     transition: all 2s ease;
 }
 
- .Resizer.horizontal {
+.Resizer.horizontal {
     height: 11px;
     margin: -5px 0;
     border-top: 5px solid rgba(255, 255, 255, 0);

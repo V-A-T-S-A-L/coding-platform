@@ -118,7 +118,7 @@ class Main {
         setOutput("Loading..");
         const exampleTestCases = [...testCases];
 
-        if(customCase.trim()) {
+        if (customCase.trim()) {
             exampleTestCases.push({
                 input: customCase,
                 output: customOutput
@@ -161,7 +161,7 @@ class Main {
 
     return (
         <div className="code-submission-page">
-            <SplitPane split="vertical" minSize={400} defaultSize="40%" className="split-pane">
+            <div style={{display: "flex", justifyContent: "space-between"}}>
                 <div className="problem-explanation">
                     <h2>Problem: {challengeData.problem_name}</h2>
                     <p>Explanation: {challengeData.explanation}</p>
@@ -175,7 +175,7 @@ class Main {
                     ))}
                     <pre>
                         <h3>Custom Test Case:</h3>
-                        <div style={{display: "flex", flexDirection: "column"}}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
                             <input value={customCase} onChange={(e) => setCustomCase(e.target.value)} className='customTestCaseInput' type='text' placeholder='Enter input for test case'></input>
                             <input value={customOutput} onChange={(e) => setCustomOutpt(e.target.value)} className='customTestCaseInput' type='text' placeholder='Enter expected output'></input>
                         </div>
@@ -186,14 +186,18 @@ class Main {
                         <pre>{output}</pre>
                     </div>
                 </div>
+                <div className='bar'></div>
                 <div className="code-editor-section" style={{ padding: '20px' }}>
-                    <Editor
-                        height="600px"
-                        theme="vs-dark"
-                        defaultLanguage={language}
-                        value={code}
-                        onChange={handleCodeChange}
-                    />
+                    <div className='editor-div'>
+                        <Editor
+                            height="600px"
+                            width="900px"
+                            theme="vs-dark"
+                            defaultLanguage={language}
+                            value={code}
+                            onChange={handleCodeChange}
+                        />
+                    </div>
                     <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                         <button
                             onClick={handleSubmit}
@@ -213,18 +217,18 @@ class Main {
                             onClick={handleCompile}
                             style={{
                                 padding: '10px 20px',
-                                backgroundColor: '#080808',
+                                backgroundColor: '#080',
                                 border: '1px solid white',
                                 color: 'white',
                                 borderRadius: '5px',
                                 cursor: 'pointer'
                             }}
                         >
-                            Compile Code
+                            Submit Code
                         </button>
                     </div>
                 </div>
-            </SplitPane>
+            </div>
         </div>
     );
 };
