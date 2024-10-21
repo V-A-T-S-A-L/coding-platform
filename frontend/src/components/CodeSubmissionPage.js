@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
-import SplitPane from 'react-split-pane';
 import axios from 'axios';
 import './codeSubmit.css'; // Add your styling here
 
@@ -12,10 +11,9 @@ const CodeSubmissionPage = () => {
 
 class Main {
     public static void main(String[] args) {
-
         // Start code here
     }
-}`
+}`;
 
     const [code, setCode] = useState(defaultCode);
     const [language, setLanguage] = useState('java');
@@ -26,6 +24,9 @@ class Main {
     const [memory, setMemory] = useState('');
     const [customCase, setCustomCase] = useState('');
     const [customOutput, setCustomOutpt] = useState('');
+    
+    const [outputs, setOutputs] = useState([]); // State to store outputs of all test cases
+    const [selectedTestCase, setSelectedTestCase] = useState(0); // Track selected test case
 
     // Judge0 API URL
     const JUDGE0_API_URL = 'https://api.judge0.com/submissions/?base64_encoded=false&wait=true';
@@ -56,78 +57,21 @@ class Main {
         setCode(value);
     };
 
-    // Compile Code using Judge0
-    const handleCompile = async () => {
-        const submissionData = {
-            source_code: code,
-            language_id: languageIDs[language],
-            stdin: testCases[0]?.input || '', // Example test case input
-        };
-
-        try {
-            const response = await axios.post(JUDGE0_API_URL, submissionData);
-            const { stdout, stderr, compile_output } = response.data;
-
-            if (stderr) {
-                setOutput(`Error: ${stderr}`);
-            } else if (compile_output) {
-                setOutput(`Compilation Error: ${compile_output}`);
-            } else {
-                setOutput(`Output: ${stdout}`);
-            }
-        } catch (error) {
-            console.error('Compilation Error:', error);
-            setOutput('Failed to compile the code.');
-        }
-    };
-
-    // Run Code using Judge0
-    const handleRun = async () => {
-        let testResults = '';
-        for (let i = 0; i < testCases.length; i++) {
-            const submissionData = {
-                source_code: code,
-                language_id: languageIDs[language],
-                stdin: testCases[i].input, // Using test case input
-            };
-
-            try {
-                const response = await axios.post(JUDGE0_API_URL, submissionData);
-                const { stdout, stderr, compile_output } = response.data;
-
-                if (stderr) {
-                    testResults += `Test Case ${i + 1}: Error: ${stderr}\n`;
-                } else if (compile_output) {
-                    testResults += `Test Case ${i + 1}: Compilation Error: ${compile_output}\n`;
-                } else {
-                    const expectedOutput = testCases[i].output.trim();
-                    const actualOutput = stdout.trim();
-                    const result = expectedOutput === actualOutput ? 'Passed' : 'Failed';
-                    testResults += `Test Case ${i + 1}: ${result}\nExpected: ${expectedOutput}\nReceived: ${actualOutput}\n\n`;
-                }
-            } catch (error) {
-                console.error('Execution Error:', error);
-                testResults += `Test Case ${i + 1}: Failed to execute.\n\n`;
-            }
-        }
-
-        setOutput(testResults);
-    };
-
+    // Handle Submit - Run Code
     const handleSubmit = async () => {
-        setOutput("Loading..");
+        setOutput("Loading...");
         const exampleTestCases = [...testCases];
 
         if (customCase.trim()) {
             exampleTestCases.push({
                 input: customCase,
                 output: customOutput
-            })
+            });
         }
 
         const payload = {
             code,
-            exampleTestCases  // Pass the array of test cases
+            exampleTestCases // Pass the array of test cases
         };
 
         try {
@@ -135,21 +79,16 @@ class Main {
             const result = response.data;
 
             if (result.results && result.results.length > 0) {
-                const outputs = result.results.map((r, idx) => {
-                    const yourOutput = r.yourOutput.trim(); // Trim your output
-                    const expectedOutput = r.expectedOutput.trim(); // Trim expected output
+                const outputList = result.results.map((r, idx) => {
+                    const yourOutput = r.yourOutput.trim();
+                    const expectedOutput = r.expectedOutput.trim();
+                    const isPassed = yourOutput === expectedOutput;
 
-                    const isPassed = yourOutput === expectedOutput; // Check for equality
+                    return `Test Case ${idx + 1}:\nStatus: ${isPassed ? 'passed' : 'failed'}\nInput: ${r.input}\nYour Output: ${yourOutput}\nExpected Output: ${expectedOutput}\nExecution Time: ${r.execution_time}\n`;
+                });
 
-                    return `Test Case ${idx + 1}:\n` +
-                        `Status: ${isPassed ? 'passed' : 'failed'}\n` +
-                        `Input: ${r.input}\n` +
-                        `Your Output: ${yourOutput}\n` +
-                        `Expected Output: ${expectedOutput}\n` +
-                        `Execution Time: ${r.execution_time}\n`;
-                }).join("\n");
-
-                setOutput(outputs);
+                setOutputs(outputList); // Set all test case outputs in state
+                setSelectedTestCase(0); // Reset to the first test case output
             } else {
                 setOutput('No output received');
             }
@@ -158,6 +97,10 @@ class Main {
         }
     };
 
+    // Handle test case selection
+    const handleTestCaseSelect = (index) => {
+        setSelectedTestCase(index);
+    };
 
     return (
         <div className="code-submission-page">
@@ -181,9 +124,26 @@ class Main {
                         </div>
                     </pre>
 
-                    <div style={{ overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+                    <div className='output' style={{ maxHeight: '220px', overflowY: 'scroll', marginTop: '20px', backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
                         <h3>Output:</h3>
-                        <pre>{output}</pre>
+                        {outputs.length > 0 ? (
+                            <>
+                                <pre>{outputs[selectedTestCase]}</pre>
+                                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                                    {outputs.map((_, index) => (
+                                        <button 
+                                            key={index} 
+                                            onClick={() => handleTestCaseSelect(index)}
+                                            style={{ backgroundColor: selectedTestCase === index ? '#555' : '#333', color: 'white', padding: '5px 10px', cursor: 'pointer', border: 'none', borderRadius: '5px' }}>
+                                            {/* Test Case {index + 1} */}
+                                            {index + 1}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <pre>{output}</pre>
+                        )}
                     </div>
                 </div>
                 <div className='bar'></div>
@@ -198,7 +158,7 @@ class Main {
                             onChange={handleCodeChange}
                         />
                     </div>
-                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                         <button
                             onClick={handleSubmit}
                             style={{
@@ -211,20 +171,6 @@ class Main {
                             }}
                         >
                             Run Code
-                        </button>
-
-                        <button
-                            onClick={handleCompile}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#080',
-                                border: '1px solid white',
-                                color: 'white',
-                                borderRadius: '5px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Submit Code
                         </button>
                     </div>
                 </div>

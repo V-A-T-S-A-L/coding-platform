@@ -200,7 +200,6 @@ app.get('/user-rooms/:userId', (req, res) => {
 });
 
 // Get data of room you entered
-
 app.get('/get-room/:room_id', (req, res) => {
     const { room_id } = req.params;
 
@@ -215,7 +214,6 @@ app.get('/get-room/:room_id', (req, res) => {
 });
 
 // Create new challenge 
-
 app.post('/create-challenge/:roomId', (req, res) => {
     const { roomId } = req.params;
     const { problemName, explanation, difficulty, deadline, exampleTestCases, hiddenTestCases, created_by } = req.body;
@@ -245,7 +243,6 @@ app.post('/create-challenge/:roomId', (req, res) => {
 });
 
 // Get problems inside a room
-
 app.get('/get-problems/:room_id', (req, res) => {
     const { room_id } = req.params;
 
@@ -261,7 +258,6 @@ app.get('/get-problems/:room_id', (req, res) => {
 });
 
 // Get members in a room
-
 app.get('/get-members/:room_id', (req, res) => {
     const { room_id } = req.params;
 
@@ -284,7 +280,6 @@ app.get('/get-members/:room_id', (req, res) => {
 })
 
 // Update room name
-
 app.put('/update-room-name/:room_id', (req, res) => {
     const { id, room_name } = req.body;
 
@@ -300,7 +295,6 @@ app.put('/update-room-name/:room_id', (req, res) => {
 })
 
 // Get challenge data
-
 app.get('/get-challenge-data/:challenge_id', (req, res) => {
     const { challenge_id } = req.params;
 
@@ -317,16 +311,13 @@ app.get('/get-challenge-data/:challenge_id', (req, res) => {
 
 // Run code
 app.post('/execute', async (req, res) => {
-    const { code, exampleTestCases } = req.body;  // Expect an array of test cases
+    const { code, exampleTestCases } = req.body;
     const judge0BaseUrl = 'https://judge0-ce.p.rapidapi.com/submissions';
     const apiKey = process.env.JUDGE0_API_KEY;
 
-    // Helper function to delay polling
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    // Function to submit code to Judge0 and get the result
     const executeTestCase = async (input) => {
-        // Prepare the payload for Judge0 API
         const options = {
             method: 'POST',
             url: judge0BaseUrl,
@@ -337,17 +328,15 @@ app.post('/execute', async (req, res) => {
             },
             data: {
                 source_code: code,
-                language_id: 62,  // Java language ID for Judge0
+                language_id: 62,
                 stdin: input,
             },
         };
 
         try {
-            // Submit the code and get the token
             const response = await axios.request(options);
             const { token } = response.data;
 
-            // Poll for the result with delay
             const getResult = async () => {
                 const result = await axios.get(`${judge0BaseUrl}/${token}`, {
                     headers: {
@@ -362,9 +351,8 @@ app.post('/execute', async (req, res) => {
             let attempts = 0;
             const maxAttempts = 5;
 
-            // Poll until result is ready or until max attempts
             while (resultData.status.id <= 2 && attempts < maxAttempts) {
-                await delay(1000); // Wait for 1 second between each poll
+                await delay(1000);
                 resultData = await getResult();
                 attempts++;
             }
@@ -376,7 +364,6 @@ app.post('/execute', async (req, res) => {
     };
 
     try {
-        // Collect results for all example test cases
         const results = [];
         for (const testCase of exampleTestCases) {
             const result = await executeTestCase(testCase.input);
@@ -391,7 +378,6 @@ app.post('/execute', async (req, res) => {
             });
         }
 
-        // Return the combined results for all test cases
         res.json({ results });
     } catch (error) {
         console.error('Execution Error:', error);
@@ -399,7 +385,13 @@ app.post('/execute', async (req, res) => {
     }
 });
 
-
+/*
+    Scanner sc = new Scanner(System.in);
+    int a = sc.nextInt();
+    int b = sc.nextInt()    
+    int res = a * b;
+    System.out.println(res);
+*/
 
 app.listen(5000);
 console.log("Working");

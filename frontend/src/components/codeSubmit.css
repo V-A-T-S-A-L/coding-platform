@@ -46,6 +46,19 @@
     width: 2px;
 }
 
+.output ::-webkit-scrollbar {
+    width: 2px;
+}
+
+.output ::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+.output ::-webkit-scrollbar-thumb {
+  background-color: #7d7d7d;
+  border-radius: 10px;
+}
+
 button {
     cursor: pointer;
 }

@@ -65,7 +65,7 @@ const Settings = () => {
     }
 
     const copyCode = () => {
-        const roomCode = roomData.room_code; // Assuming roomData has room_code
+        const roomCode = roomData.room_code;
         if (!roomCode) {
             alert("Room code not found");
             return;
