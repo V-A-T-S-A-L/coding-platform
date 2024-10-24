@@ -57,6 +57,10 @@ class Main {
         setCode(value);
     };
 
+    const handleCompile = async () => {
+        console.warn("compile");
+    }
+
     // Handle Submit - Run Code
     const handleSubmit = async () => {
         setOutput("Loading...");
@@ -171,6 +175,19 @@ class Main {
                             }}
                         >
                             Run Code
+                        </button>
+                        <button
+                            onClick={handleCompile}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#080808',
+                                border: '1px solid white',
+                                color: 'white',
+                                borderRadius: '5px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Submit Code
                         </button>
                     </div>
                 </div>
