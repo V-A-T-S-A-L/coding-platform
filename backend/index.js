@@ -60,7 +60,6 @@ db.query(`
 `);
 
 // Challenges schema
-
 db.query(`
     CREATE TABLE IF NOT EXISTS challenges (
         challenge_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -76,6 +75,20 @@ db.query(`
         FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
         FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
     );    
+`)
+
+// Submissions schema
+db.query(`
+    CREATE TABLE IF NOT EXISTS submissions (
+        submission_id INT AUTO_INCREMENT PRIMARY KEY,
+        challenge_id INT NOT NULL,
+        room_id INT NOT NULL,
+        user_id INT NOT NULL,
+        test_cases_cleared INT NOT NULL,
+        total_exec_time FLOAT NOT NULL,
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(challenge_id, room_id, user_id)
+    )   
 `)
 
 // Signup route
@@ -385,10 +398,144 @@ app.post('/execute', async (req, res) => {
     }
 });
 
+const executeTestCase = async (input, code, language_id = 62) => {
+
+    const judge0BaseUrl = 'https://judge0-ce.p.rapidapi.com/submissions';
+    const apiKey = process.env.JUDGE0_API_KEY;
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const options = {
+        method: 'POST',
+        url: judge0BaseUrl,
+        headers: {
+            'content-type': 'application/json',
+            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+            'X-RapidAPI-Key': apiKey,
+        },
+        data: {
+            source_code: code,
+            language_id,
+            stdin: input,
+        },
+    };
+
+    try {
+        const response = await axios.request(options);
+        const { token } = response.data;
+
+        const getResult = async () => {
+            const result = await axios.get(`${judge0BaseUrl}/${token}`, {
+                headers: {
+                    'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+                    'X-RapidAPI-Key': apiKey,
+                },
+            });
+            return result.data;
+        };
+
+        let resultData = await getResult();
+        let attempts = 0;
+        const maxAttempts = 5;
+
+        while (resultData.status.id <= 2 && attempts < maxAttempts) {
+            await delay(1000);
+            resultData = await getResult();
+            attempts++;
+        }
+
+        return resultData;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+// Function to insert or update submission in MySQL
+const updateSubmission = (challenge_id, room_id, user_id, test_cases_cleared, total_exec_time, callback) => {
+    const selectQuery = `
+        SELECT test_cases_cleared, total_exec_time
+        FROM submissions
+        WHERE challenge_id = ? AND room_id = ? AND user_id = ?
+    `;
+
+    db.query(selectQuery, [challenge_id, room_id, user_id], (err, result) => {
+        if (err) return callback(err);
+
+        if (result.length > 0) {
+            const { test_cases_cleared: existingCleared, total_exec_time: existingTime } = result[0];
+
+            if (test_cases_cleared > existingCleared ||
+                (test_cases_cleared === existingCleared && total_exec_time < existingTime)) {
+
+                const updateQuery = `
+                    UPDATE submissions
+                    SET test_cases_cleared = ?, total_exec_time = ?, submitted_at = NOW()
+                    WHERE challenge_id = ? AND room_id = ? AND user_id = ?
+                `;
+                db.query(updateQuery, [test_cases_cleared, total_exec_time, challenge_id, room_id, user_id], callback);
+            } else {
+                callback(null); // No update needed
+            }
+        } else {
+            const insertQuery = `
+                INSERT INTO submissions (challenge_id, room_id, user_id, test_cases_cleared, total_exec_time, submitted_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+            `;
+            db.query(insertQuery, [challenge_id, room_id, user_id, test_cases_cleared, total_exec_time], callback);
+        }
+    });
+};
+
+// Updated execute route
+app.post('/submit', async (req, res) => {
+    const { code, hiddenTestCases, challenge_id, room_id, user_id } = req.body;
+
+    try {
+        const results = [];
+        let totalExecTime = 0;  // Accumulate execution time
+
+        for (const testCase of hiddenTestCases) {
+            const result = await executeTestCase(testCase.input, code);
+            const execTime = parseFloat(result.time) || 0;
+
+            results.push({
+                input: testCase.input,
+                expectedOutput: testCase.output,
+                yourOutput: result.stdout || result.stderr || result.compile_output || 'Error',
+                status: result.status.description,
+                execution_time: result.time || 'N/A',
+                memory: result.memory ? `${result.memory} KB` : 'N/A',
+            });
+
+            totalExecTime += execTime;
+        }
+
+        // Count how many test cases passed
+        const passedTestCases = results.filter(r => r.yourOutput.trim() === r.expectedOutput.trim()).length;
+
+        // Update submission data in the database
+        updateSubmission(challenge_id, room_id, user_id, passedTestCases, totalExecTime, (err) => {
+            if (err) {
+                console.error('Database Error:', err);
+                return res.status(500).json({ error: 'Failed to update submission' });
+            }
+
+            // Return the number of test cases cleared and total execution time to the frontend
+            res.json({
+                passedTestCases,
+                totalExecTime,
+                results
+            });
+        });
+    } catch (error) {
+        console.error('Execution Error:', error);
+        res.status(500).json({ error: 'Failed to execute code' });
+    }
+});
+
 /*
     Scanner sc = new Scanner(System.in);
     int a = sc.nextInt();
-    int b = sc.nextInt()    
+    int b = sc.nextInt() ;   
     int res = a * b;
     System.out.println(res);
 */

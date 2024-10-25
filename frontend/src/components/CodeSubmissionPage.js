@@ -6,6 +6,9 @@ import './codeSubmit.css'; // Add your styling here
 
 const CodeSubmissionPage = () => {
     const { room_id, challenge_id } = useParams();
+    const user = localStorage.getItem('user');
+    const user_id = JSON.parse(user).id;
+
 
     const defaultCode = `import java.util.*;
 
@@ -20,6 +23,7 @@ class Main {
     const [output, setOutput] = useState('Run code to check examples or custom test cases');
     const [challengeData, setChallengeData] = useState({});
     const [testCases, setTestCases] = useState([]);
+    const [hiddenTestCases, setHiddenTestCases] = useState([]);
     const [executionTime, setExecutionTime] = useState('');
     const [memory, setMemory] = useState('');
     const [customCase, setCustomCase] = useState('');
@@ -44,6 +48,7 @@ class Main {
                 const response = await axios.get(`http://localhost:5000/get-challenge-data/${challenge_id}`);
                 setChallengeData(response.data);
                 setTestCases(JSON.parse(response.data.example_test_cases)); // Parsing the test cases
+                setHiddenTestCases(JSON.parse(response.data.hidden_test_cases));
             } catch (error) {
                 console.warn('Error fetching code data', error);
             }
@@ -59,6 +64,28 @@ class Main {
 
     const handleCompile = async () => {
         console.warn("compile");
+
+        const payload = {
+            code,
+            hiddenTestCases,
+            challenge_id,
+            room_id,
+            user_id
+        };
+
+        try {
+            const response = await axios.post('http://localhost:5000/submit', payload);
+            const result = response.data;
+
+            if(result.results && result.results.length > 0) {
+                console.warn(result);
+                setOutput(JSON.parse(result));
+            } else {
+                console.warn('No output received');
+            }
+        } catch(error) {
+            console.warn(error);
+        }
     }
 
     // Handle Submit - Run Code
