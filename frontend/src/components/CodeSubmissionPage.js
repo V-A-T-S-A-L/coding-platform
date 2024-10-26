@@ -65,6 +65,8 @@ class Main {
     const handleCompile = async () => {
         console.warn("compile");
 
+        setOutput("Loading..");
+
         const payload = {
             code,
             hiddenTestCases,
@@ -79,7 +81,9 @@ class Main {
 
             if(result.results && result.results.length > 0) {
                 console.warn(result);
-                setOutput(JSON.parse(result));
+                const passedTestCases = result.passedTestCases;
+                const totalExecTime = result.totalExecTime;
+                setOutput('Test cases cleared: ' + passedTestCases + ' of 5' + '\nTotal execution time: ' + totalExecTime);
             } else {
                 console.warn('No output received');
             }
@@ -90,7 +94,7 @@ class Main {
 
     // Handle Submit - Run Code
     const handleSubmit = async () => {
-        setOutput("Loading...");
+        setOutput("Loading..");
         const exampleTestCases = [...testCases];
 
         if (customCase.trim()) {
