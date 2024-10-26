@@ -10,6 +10,7 @@ import CreateChallenge from './components/NewProblem';
 import Room from './components/Room';
 import Settings from './components/Settings';
 import CodeSubmissionPage from './components/CodeSubmissionPage';
+import Dashboard from './Dashboard';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path='/room/:room_id/create-challenge' element={<CreateChallenge />}/>
             <Route path='/room/:room_id/settings' element={<Settings />}/>
             <Route path='/room/:room_id/:challenge_id' element={<CodeSubmissionPage />} />
+            <Route path='/room/:room_id/dashboard' element={<Dashboard />} />
           </Route>
           <Route path='/' element={<Land />}/>
           <Route path='/signup' element={<Signup />}/>
