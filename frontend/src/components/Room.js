@@ -7,6 +7,7 @@ const Room = () => {
 
     const [roomData, setRoomData] = useState({});
     const [problems, setProblems] = useState([]);
+    const [status, setStatus] = useState([]);
     const { room_id } = useParams();
     const user = JSON.parse(localStorage.getItem('user'));
     const user_id = user.id;
@@ -35,8 +36,24 @@ const Room = () => {
             }
         }
 
+        const getStatus = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
+                setStatus(response.data);
+            } catch(error) {
+                console.warn(error);
+            }
+
+            const updatedProblems = problems.map(problem => ({
+                ...problem,
+                status: status.includes(problem.challenge_id) ? 'solved' : 'unsolved'
+            }));
+            setProblems(updatedProblems);
+        }
+
         checkAdmin();
         getProblems();
+        getStatus();
 
     }, [room_id, roomData, user_id, problems]);
 
@@ -91,8 +108,8 @@ const Room = () => {
                     {problems.length > 0 ? (<table>
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Problem</th>
-                                <th>Status</th>
                                 <th>Difficulty</th>
                                 <th>Deadline</th>
                             </tr>
@@ -100,9 +117,13 @@ const Room = () => {
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
+                                    <td>{problem.status === "solved" ? "Solved" : "Unsolved"}</td>
                                     <td><Link style={{textDecoration: "none", color: "white"}} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.problem_name}</Link></td>
-                                    <td>Unsolved</td>
-                                    <td>{problem.difficulty}</td>
+                                    {problem.difficulty === 'easy' ? (
+                                        <td style={{color: "limegreen"}}>{problem.difficulty}</td>
+                                    ) : (
+                                        <td style={{color: "orange"}}>{problem.difficulty}</td>
+                                    )}
                                     <td>{problem.deadline.split("T")[0]}</td>
                                 </tr>
                             ))}

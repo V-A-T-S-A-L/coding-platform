@@ -49,6 +49,7 @@
 }
 
 .problems-card {
+    min-height: 73vh;
     background-color: #000; /* Dark gray card */
     padding: 20px;
     border-radius: 25px;

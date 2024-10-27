@@ -270,6 +270,20 @@ app.get('/get-problems/:room_id', (req, res) => {
     });
 });
 
+// Check problem status
+app.get('/get-status/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT challenge_id FROM submissions
+        WHERE room_id = ? AND user_id = ?
+    `
+    db.query(query, [room_id, user_id], (err, result) => {
+        if(err) return res.status(500).send("Error fetching status");
+        res.status(200).send(result);
+    })
+})
+
 // Get members in a room
 app.get('/get-members/:room_id', (req, res) => {
     const { room_id } = req.params;
