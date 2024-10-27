@@ -13,49 +13,58 @@ const Room = () => {
     const user_id = user.id;
     const [isAdmin, setIsAdmin] = useState(false);
 
-    useEffect(() => {
-        const checkAdmin = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
-                setRoomData(response.data);
+    const checkAdmin = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
+            setRoomData(response.data);
+            if (response.data.admin_id === user_id) {
+                setIsAdmin(true);
             }
-            catch (error) {
-                console.warn(error);
-            };
-
-            if (roomData.admin_id === user_id) setIsAdmin(true);
-
+        } catch (error) {
+            console.warn(error);
         }
+    };
 
-        const getProblems = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/get-problems/${room_id}`);
-                setProblems(response.data);
-            } catch (error) {
-                console.warn("Error fetching problems", error);
-            }
+    const getProblems = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-problems/${room_id}`);
+            setProblems(response.data);
+        } catch (error) {
+            console.warn("Error fetching problems", error);
         }
+    };
 
-        const getStatus = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
-                setStatus(response.data);
-            } catch(error) {
-                console.warn(error);
-            }
+    const getStatus = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
+            const fetchedStatus = response.data;
+            setStatus(fetchedStatus);
+
+            const solvedChallengeIds = fetchedStatus.map(item => item.challenge_id);
 
             const updatedProblems = problems.map(problem => ({
                 ...problem,
-                status: status.includes(problem.challenge_id) ? 'solved' : 'unsolved'
+                status: solvedChallengeIds.includes(problem.challenge_id) ? 'solved' : 'unsolved'
             }));
-            setProblems(updatedProblems);
-        }
 
+            setProblems(updatedProblems);
+        } catch (error) {
+            console.warn(error);
+        }
+    };
+
+    useEffect(() => {
         checkAdmin();
         getProblems();
-        getStatus();
+    }, [room_id, user_id]); 
 
-    }, [room_id, roomData, user_id, problems]);
+    useEffect(() => {
+        if (problems.length > 0) {
+            getStatus(); 
+        }
+    }, [problems]);
+    
+    
 
     const topScorers = [
         { name: 'User 1', score: 250 },
@@ -108,7 +117,6 @@ const Room = () => {
                     {problems.length > 0 ? (<table>
                         <thead>
                             <tr>
-                                <th></th>
                                 <th>Problem</th>
                                 <th>Difficulty</th>
                                 <th>Deadline</th>
@@ -117,8 +125,7 @@ const Room = () => {
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
-                                    <td>{problem.status === "solved" ? "Solved" : "Unsolved"}</td>
-                                    <td><Link style={{textDecoration: "none", color: "white"}} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.problem_name}</Link></td>
+                                    <td><Link style={{textDecoration: "none", color: "white"}} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.status === "solved" ? (<strong style={{color: "limegreen"}}>&#10003;&nbsp;&nbsp;</strong>) : ""}{problem.problem_name}</Link></td>
                                     {problem.difficulty === 'easy' ? (
                                         <td style={{color: "limegreen"}}>{problem.difficulty}</td>
                                     ) : (
