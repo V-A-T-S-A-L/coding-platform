@@ -1,0 +1,11 @@
+.solved-data {
+    border: 1px dashed white;
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px;
+}
+
+.solved-data-block {
+    display: flex;
+    justify-content: space-around;
+}

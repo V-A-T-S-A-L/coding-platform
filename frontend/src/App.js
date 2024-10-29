@@ -10,7 +10,7 @@ import CreateChallenge from './components/NewProblem';
 import Room from './components/Room';
 import Settings from './components/Settings';
 import CodeSubmissionPage from './components/CodeSubmissionPage';
-import Dashboard from './Dashboard';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
