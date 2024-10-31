@@ -45,12 +45,13 @@ const Dashboard = () => {
             </div>
             <div className="left-column">
                 <div className="solved-data">
+                    <h1>DSA 101</h1>
                     <div className="solved-data-block">
-                        <h3>3 Challenges</h3>
-                        <h3>&#8226;</h3>
-                        <h3 style={{color: "limegreen"}}>2 Solved</h3>
-                        <h3>&#8226;</h3>
-                        <h3 style={{color: "red"}}>1 Uncleared</h3>
+                        <label>3 Challenges</label>
+                        <label>&#8226;</label>
+                        <label style={{color: "limegreen"}}>2 Solved</label>
+                        <label>&#8226;</label>
+                        <label style={{color: "red"}}>1 Uncleared</label>
                     </div>
                 </div>
                 <div className="graph-data">

@@ -56,15 +56,15 @@ const Room = () => {
     useEffect(() => {
         checkAdmin();
         getProblems();
-    }, [room_id, user_id]); 
+    }, [room_id, user_id]);
 
     useEffect(() => {
         if (problems.length > 0) {
-            getStatus(); 
+            getStatus();
         }
     }, [problems]);
-    
-    
+
+
 
     const topScorers = [
         { name: 'User 1', score: 250 },
@@ -125,11 +125,13 @@ const Room = () => {
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
-                                    <td><Link style={{textDecoration: "none", color: "white"}} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.status === "solved" ? (<strong style={{color: "limegreen"}}>&#10003;&nbsp;&nbsp;</strong>) : ""}{problem.problem_name}</Link></td>
+                                    <td><Link style={{ textDecoration: "none", color: "white" }} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.status === "solved" ? (<strong style={{ color: "limegreen" }}>&#10003;&nbsp;&nbsp;</strong>) : ""}{problem.problem_name}</Link></td>
                                     {problem.difficulty === 'easy' ? (
-                                        <td style={{color: "limegreen"}}>{problem.difficulty}</td>
+                                        <td style={{ color: "limegreen" }}>{problem.difficulty}</td>
+                                    ) : problem.difficulty === 'medium' ? (
+                                        <td style={{ color: "orange" }}>{problem.difficulty}</td>
                                     ) : (
-                                        <td style={{color: "orange"}}>{problem.difficulty}</td>
+                                        <td style={{ color: "red" }}>{problem.difficulty}</td>
                                     )}
                                     <td>{problem.deadline.split("T")[0]}</td>
                                 </tr>
