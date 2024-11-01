@@ -1,11 +1,72 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import './Dashboard.css';
+import { Bar } from "react-chartjs-2";
+import "./Dashboard.css";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
 
     const room_id = 10;
     const isAdmin = true;
+
+    const totalQuestions = { easy: 50, medium: 30, hard: 15 };
+    const solvedQuestions = { easy: 34, medium: 12, hard: 4 };
+
+    const data = {
+        labels: ["Easy", "Medium", "Hard"],
+        datasets: [
+            {
+                label: "Total Questions",
+                data: [totalQuestions.easy, totalQuestions.medium, totalQuestions.hard],
+                backgroundColor: "rgba(153, 153, 153, 0.6)", // Grey color for total questions
+                borderColor: "#fff",
+                borderWidth: 2,
+            },
+            {
+                label: "Solved Questions",
+                data: [solvedQuestions.easy, solvedQuestions.medium, solvedQuestions.hard],
+                backgroundColor: "rgba(76, 175, 80, 0.7)", // Green color for solved questions
+                borderColor: "#fff",
+                borderWidth: 2,
+            },
+        ],
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+                position: "top",
+            },
+            title: {
+                display: false,
+                text: "Questions Distribution",
+                color: "#fff",
+            },
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: "#fff",
+                },
+                grid: {
+                    display: false,
+                },
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: "#fff",
+                },
+                grid: {
+                    color: "rgba(255, 255, 255, 0.2)",
+                },
+            },
+        },
+    };
 
     return (
         <div className="settings-container">
@@ -47,15 +108,14 @@ const Dashboard = () => {
                 <div className="solved-data">
                     <h1>DSA 101</h1>
                     <div className="solved-data-block">
-                        <label>3 Challenges</label>
-                        <label>&#8226;</label>
-                        <label style={{color: "limegreen"}}>2 Solved</label>
-                        <label>&#8226;</label>
-                        <label style={{color: "red"}}>1 Uncleared</label>
+                        <div className="stats-div">3 Challenges</div>
+                        <div className="stats-div" style={{ color: "limegreen" }}>2 Solved</div>
+                        <div className="stats-div" style={{ color: "red" }}>1 Uncleared</div>
                     </div>
                 </div>
                 <div className="graph-data">
-
+                    <h2>Questions Distribution</h2>
+                    <Bar data={data} options={options} />
                 </div>
             </div>
             <div className="right-column">
