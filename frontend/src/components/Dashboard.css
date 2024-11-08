@@ -27,3 +27,9 @@
     height: 100%;
     align-items: center;
 }
+
+.recent {
+    padding: 5px;
+    border: 1px solid white;
+    border-radius: 15px;
+}

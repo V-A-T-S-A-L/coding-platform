@@ -119,7 +119,12 @@ const Dashboard = () => {
                 </div>
             </div>
             <div className="right-column">
-
+                <h1>Recent Activity</h1>
+                <div className="recent">
+                    <p>Solved "Two Sum Problem"</p>
+                    <p>Attempted "Climbing Stairs"</p>
+                    <p>Solved "Sum of Integers"</p>
+                </div>
             </div>
         </div>
     )
