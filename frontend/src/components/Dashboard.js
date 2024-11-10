@@ -2,9 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import "./Dashboard.css";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, LineController } from "chart.js";
+import { Line } from 'react-chartjs-2';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, LineController);
 
 const Dashboard = () => {
 
@@ -68,6 +69,54 @@ const Dashboard = () => {
         },
     };
 
+    const dataLine = {
+        labels: [
+            '2024-11-01', '2024-11-02', '2024-11-03',
+            '2024-11-04', '2024-11-05', '2024-11-06',
+            '2024-11-07'
+        ],
+        datasets: [
+            {
+                label: 'Code Submissions',
+                data: [5, 10, 8, 15, 7, 14, 20], // Example data for each day
+                fill: false,
+                backgroundColor: 'rgba(75,192,192,0.6)',
+                borderColor: '#080',
+                tension: 0.3,
+            },
+        ],
+    };
+
+    const optionsLine = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+                position: 'top',
+            },
+            title: {
+                display: false,
+                text: "Submissions Distribution",
+                color: "#fff",
+            },
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Date',
+                },
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Submissions Count',
+                },
+                beginAtZero: true,
+            },
+        },
+    };
+
     return (
         <div className="settings-container">
             <div className="sidebar">
@@ -124,6 +173,9 @@ const Dashboard = () => {
                     <p>Solved "Two Sum Problem"</p>
                     <p>Attempted "Climbing Stairs"</p>
                     <p>Solved "Sum of Integers"</p>
+                </div>
+                <div className="line-graph-data">
+                    <Line data={dataLine} options={optionsLine} />
                 </div>
             </div>
         </div>

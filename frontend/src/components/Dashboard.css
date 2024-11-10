@@ -11,8 +11,7 @@
 }
 
 .stats-div {
-    background-color: #080808;
-    border: 1px solid white;
+    border: 1px solid #333;
     padding: 30px;
     border-radius: 15px;
     width: 23%;
@@ -21,15 +20,28 @@
 
 .graph-data {
     text-align: center;
-    border: 1px solid white;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 15px;
     height: 100%;
     align-items: center;
 }
 
+.line-graph-data {
+    text-align: center;
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 15px;
+    height: 56%;
+    align-items: center;
+}
+
 .recent {
     padding: 5px;
-    border: 1px solid white;
+    border: 1px solid #333;
     border-radius: 15px;
+}
+
+.recent p {
+    margin-left: 20px;
 }
