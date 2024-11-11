@@ -336,6 +336,21 @@ app.get('/get-challenge-data/:challenge_id', (req, res) => {
     })
 });
 
+// Dashboard component for count of challenges
+app.get('/get-problem-count/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM challenges
+        WHERE room_id = ?
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
 // Run code
 app.post('/execute', async (req, res) => {
     const { code, exampleTestCases } = req.body;

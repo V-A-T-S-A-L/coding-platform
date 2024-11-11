@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { json, Link, useParams } from 'react-router-dom';
 import { Bar } from "react-chartjs-2";
 import "./Dashboard.css";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, LineController } from "chart.js";
@@ -9,8 +10,26 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const Dashboard = () => {
 
-    const room_id = 10;
+    const { room_id } = useParams();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const user_id = user.id;
     const isAdmin = true;
+
+    const[problemCount, setProblemCount] = useState();
+
+    const getProblems = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-problem-count/${room_id}`);
+            setProblemCount(response.data.count);
+            console.warn(problemCount);
+        } catch (error) {
+            console.warn("Error fetching problems", error);
+        }
+    };
+
+    useEffect(() => {
+        getProblems();
+    }, [room_id, user_id]);
 
     const totalQuestions = { easy: 50, medium: 30, hard: 15 };
     const solvedQuestions = { easy: 34, medium: 12, hard: 4 };
@@ -157,7 +176,7 @@ const Dashboard = () => {
                 <div className="solved-data">
                     <h1>DSA 101</h1>
                     <div className="solved-data-block">
-                        <div className="stats-div">3 Challenges</div>
+                        <div className="stats-div">{problemCount} Challenges</div>
                         <div className="stats-div" style={{ color: "limegreen" }}>2 Solved</div>
                         <div className="stats-div" style={{ color: "red" }}>1 Uncleared</div>
                     </div>

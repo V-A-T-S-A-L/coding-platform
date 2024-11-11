@@ -33,20 +33,20 @@ const Room = () => {
             console.warn("Error fetching problems", error);
         }
     };
-
+    
     const getStatus = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
             const fetchedStatus = response.data;
             setStatus(fetchedStatus);
-
+            
             const solvedChallengeIds = fetchedStatus.map(item => item.challenge_id);
-
+            
             const updatedProblems = problems.map(problem => ({
                 ...problem,
                 status: solvedChallengeIds.includes(problem.challenge_id) ? 'solved' : 'unsolved'
             }));
-
+            
             setProblems(updatedProblems);
         } catch (error) {
             console.warn(error);
@@ -57,13 +57,12 @@ const Room = () => {
         checkAdmin();
         getProblems();
     }, [room_id, user_id]);
-
+    
     useEffect(() => {
         if (problems.length > 0) {
             getStatus();
         }
     }, [problems]);
-
 
 
     const topScorers = [
