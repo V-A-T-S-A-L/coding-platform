@@ -351,6 +351,36 @@ app.get('/get-problem-count/:room_id', (req, res) => {
     });
 });
 
+// Dashboard component for count of solved challenges
+app.get('/get-solved-count/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM submissions
+        WHERE room_id = ? AND user_id = ? AND test_cases_cleared > 4
+    `;
+
+    db.query(query, [room_id, user_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of attempted challenges
+app.get('/get-attempted-count/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM submissions
+        WHERE room_id = ? AND user_id = ? AND test_cases_cleared < 5
+    `;
+
+    db.query(query, [room_id, user_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
 // Run code
 app.post('/execute', async (req, res) => {
     const { code, exampleTestCases } = req.body;

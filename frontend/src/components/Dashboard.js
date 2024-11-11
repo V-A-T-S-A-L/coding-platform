@@ -15,20 +15,41 @@ const Dashboard = () => {
     const user_id = user.id;
     const isAdmin = true;
 
-    const[problemCount, setProblemCount] = useState();
+    const [problemCount, setProblemCount] = useState();
+    const [solvedCount, setSolvedCount] = useState();
+    const [attemptedCount, setAttemptedCount] = useState();
 
     const getProblems = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-problem-count/${room_id}`);
             setProblemCount(response.data.count);
-            console.warn(problemCount);
         } catch (error) {
             console.warn("Error fetching problems", error);
         }
     };
 
+    const getSolved = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-solved-count/${room_id}/${user_id}`);
+            setSolvedCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching solved count");
+        }
+    };
+
+    const getAttempted = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-attempted-count/${room_id}/${user_id}`);
+            setAttemptedCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching solved count");
+        }
+    };
+
     useEffect(() => {
         getProblems();
+        getSolved();
+        getAttempted();
     }, [room_id, user_id]);
 
     const totalQuestions = { easy: 50, medium: 30, hard: 15 };
@@ -177,8 +198,8 @@ const Dashboard = () => {
                     <h1>DSA 101</h1>
                     <div className="solved-data-block">
                         <div className="stats-div">{problemCount} Challenges</div>
-                        <div className="stats-div" style={{ color: "limegreen" }}>2 Solved</div>
-                        <div className="stats-div" style={{ color: "red" }}>1 Uncleared</div>
+                        <div className="stats-div" style={{ color: "limegreen" }}>{solvedCount} Solved</div>
+                        <div className="stats-div" style={{ color: "red" }}>{attemptedCount} Uncleared</div>
                     </div>
                 </div>
                 <div className="graph-data">
