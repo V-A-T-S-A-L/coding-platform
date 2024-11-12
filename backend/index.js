@@ -279,7 +279,7 @@ app.get('/get-status/:room_id/:user_id', (req, res) => {
         WHERE room_id = ? AND user_id = ?
     `
     db.query(query, [room_id, user_id], (err, result) => {
-        if(err) return res.status(500).send("Error fetching status");
+        if (err) return res.status(500).send("Error fetching status");
         res.status(200).send(result);
     })
 })
@@ -421,6 +421,63 @@ app.get('/get-hard-count/:room_id', (req, res) => {
     `;
 
     db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of solved easy challenges
+app.get('/get-solved-easy-count/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count
+        FROM challenges c
+        JOIN submissions s ON c.challenge_id = s.challenge_id
+        WHERE c.difficulty = "easy" 
+        AND s.room_id = ?
+        AND s.user_id = ?
+    `;
+
+    db.query(query, [room_id, user_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of solved easy challenges
+app.get('/get-solved-medium-count/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count
+        FROM challenges c
+        JOIN submissions s ON c.challenge_id = s.challenge_id
+        WHERE c.difficulty = "medium" 
+        AND s.room_id = ?
+        AND s.user_id = ?
+    `;
+
+    db.query(query, [room_id, user_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of solved easy challenges
+app.get('/get-solved-hard-count/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count
+        FROM challenges c
+        JOIN submissions s ON c.challenge_id = s.challenge_id
+        WHERE c.difficulty = "hard" 
+        AND s.room_id = ?
+        AND s.user_id = ?
+    `;
+
+    db.query(query, [room_id, user_id], (err, result) => {
         if (err) return res.status(500).send("Error fetching data");
         res.status(200).send({ count: result[0].count })
     });

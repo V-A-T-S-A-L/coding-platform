@@ -21,6 +21,9 @@ const Dashboard = () => {
     const [easyCount, setEasyCount] = useState();
     const [mediumCount, setMediumCount] = useState();
     const [hardCount, setHardCount] = useState();
+    const [solvedEasyCount, setSolvedEasyCount] = useState();
+    const [solvedMediumCount, setSolvedMediumCount] = useState();
+    const [solvedHardCount, setSolvedHardCount] = useState();
 
     const getProblems = async () => {
         try {
@@ -76,6 +79,33 @@ const Dashboard = () => {
         }
     }
 
+    const getSolvedEasyCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-solved-easy-count/${room_id}/${user_id}`);
+            setSolvedEasyCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching solved easy challenges");
+        }
+    }
+
+    const getSolvedMediumCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-solved-medium-count/${room_id}/${user_id}`);
+            setSolvedMediumCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching solved medium challenges");
+        }
+    }
+
+    const getSolvedHardCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-solved-hard-count/${room_id}/${user_id}`);
+            setSolvedHardCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching solved hard challenges");
+        }
+    }
+
     useEffect(() => {
         getProblems();
         getSolved();
@@ -83,10 +113,13 @@ const Dashboard = () => {
         getEasyCount();
         getMediumCount();
         getHardCount();
+        getSolvedEasyCount();
+        getSolvedMediumCount();
+        getSolvedHardCount();
     }, [room_id, user_id]);
 
     const totalQuestions = { easy: easyCount, medium: mediumCount, hard: hardCount };
-    const solvedQuestions = { easy: 34, medium: 12, hard: 4 };
+    const solvedQuestions = { easy: solvedEasyCount, medium: solvedMediumCount, hard: solvedHardCount };
 
     const data = {
         labels: ["Easy", "Medium", "Hard"],
