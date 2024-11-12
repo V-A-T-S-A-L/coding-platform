@@ -381,6 +381,51 @@ app.get('/get-attempted-count/:room_id/:user_id', (req, res) => {
     });
 });
 
+// Dashboard component for count of easy challenges
+app.get('/get-easy-count/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM challenges
+        WHERE room_id = ? AND difficulty = "easy"
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of medium challenges
+app.get('/get-medium-count/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM challenges
+        WHERE room_id = ? AND difficulty = "medium"
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
+// Dashboard component for count of hard challenges
+app.get('/get-hard-count/:room_id', (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT COUNT(*) AS count FROM challenges
+        WHERE room_id = ? AND difficulty = "hard"
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send({ count: result[0].count })
+    });
+});
+
 // Run code
 app.post('/execute', async (req, res) => {
     const { code, exampleTestCases } = req.body;

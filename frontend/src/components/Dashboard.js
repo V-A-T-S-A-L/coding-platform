@@ -18,6 +18,9 @@ const Dashboard = () => {
     const [problemCount, setProblemCount] = useState();
     const [solvedCount, setSolvedCount] = useState();
     const [attemptedCount, setAttemptedCount] = useState();
+    const [easyCount, setEasyCount] = useState();
+    const [mediumCount, setMediumCount] = useState();
+    const [hardCount, setHardCount] = useState();
 
     const getProblems = async () => {
         try {
@@ -46,13 +49,43 @@ const Dashboard = () => {
         }
     };
 
+    const getEasyCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-easy-count/${room_id}`);
+            setEasyCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching easy challenges");
+        }
+    }
+
+    const getMediumCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-medium-count/${room_id}`);
+            setMediumCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching medium challenges");
+        }
+    }
+
+    const getHardCount = async() => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-hard-count/${room_id}`);
+            setHardCount(response.data.count);
+        } catch (error) {
+            console.warn("Error fetching medium challenges");
+        }
+    }
+
     useEffect(() => {
         getProblems();
         getSolved();
         getAttempted();
+        getEasyCount();
+        getMediumCount();
+        getHardCount();
     }, [room_id, user_id]);
 
-    const totalQuestions = { easy: 50, medium: 30, hard: 15 };
+    const totalQuestions = { easy: easyCount, medium: mediumCount, hard: hardCount };
     const solvedQuestions = { easy: 34, medium: 12, hard: 4 };
 
     const data = {
