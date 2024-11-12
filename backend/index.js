@@ -483,6 +483,32 @@ app.get('/get-solved-hard-count/:room_id/:user_id', (req, res) => {
     });
 });
 
+// Dashboard component for recent activity
+app.get('/get-recent-activity/:room_id/:user_id', (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT c.problem_name,
+        s.test_cases_cleared,
+        CASE 
+           WHEN s.test_cases_cleared = 5
+           THEN 'Solved'
+           ELSE 'Attempted'
+        END AS status
+        FROM submissions s
+        JOIN challenges c ON s.challenge_id = c.challenge_id
+        WHERE s.user_id = ? 
+        AND s.room_id = ?
+        ORDER BY s.submitted_at DESC
+        LIMIT 3;
+    `;
+
+    db.query(query, [ user_id, room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching data");
+        res.status(200).send(result)
+    });
+});
+
 // Run code
 app.post('/execute', async (req, res) => {
     const { code, exampleTestCases } = req.body;

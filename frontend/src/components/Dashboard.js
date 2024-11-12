@@ -24,6 +24,7 @@ const Dashboard = () => {
     const [solvedEasyCount, setSolvedEasyCount] = useState();
     const [solvedMediumCount, setSolvedMediumCount] = useState();
     const [solvedHardCount, setSolvedHardCount] = useState();
+    const [recentActivity, setRecentActivity] = useState([]);
 
     const getProblems = async () => {
         try {
@@ -106,6 +107,16 @@ const Dashboard = () => {
         }
     }
 
+    const getRecentActivity = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-recent-activity/${room_id}/${user_id}`);
+            setRecentActivity(response.data);
+            console.warn(response.data);
+        } catch (error) {
+            console.warn("Error fetching recent challenges");
+        }
+    }
+
     useEffect(() => {
         getProblems();
         getSolved();
@@ -116,6 +127,7 @@ const Dashboard = () => {
         getSolvedEasyCount();
         getSolvedMediumCount();
         getSolvedHardCount();
+        getRecentActivity();
     }, [room_id, user_id]);
 
     const totalQuestions = { easy: easyCount, medium: mediumCount, hard: hardCount };
@@ -275,11 +287,17 @@ const Dashboard = () => {
             </div>
             <div className="right-column">
                 <h1>Recent Activity</h1>
-                <div className="recent">
-                    <p>Solved "Two Sum Problem"</p>
-                    <p>Attempted "Climbing Stairs"</p>
-                    <p>Solved "Sum of Integers"</p>
-                </div>
+                    {recentActivity.length > 0 ? (
+                        <div className="recent">
+                            {recentActivity.map((activity, index) => (
+                                <p>{activity.status} "{activity.problem_name}"</p>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="recent">
+                            <p>No activity</p>
+                        </div>
+                    )}
                 <div className="line-graph-data">
                     <Line data={dataLine} options={optionsLine} />
                 </div>
