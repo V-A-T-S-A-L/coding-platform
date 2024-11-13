@@ -26,6 +26,20 @@ const Dashboard = () => {
     const [solvedHardCount, setSolvedHardCount] = useState();
     const [recentActivity, setRecentActivity] = useState([]);
 
+    const [dataLine, setDataLine] = useState({
+        labels: [],
+        datasets: [
+            {
+                label: 'Code Submissions',
+                data: [],
+                fill: false,
+                backgroundColor: 'rgba(75,192,192,0.6)',
+                borderColor: '#080',
+                tension: 0.3,
+            },
+        ],
+    });
+
     const getProblems = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-problem-count/${room_id}`);
@@ -111,7 +125,6 @@ const Dashboard = () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-recent-activity/${room_id}/${user_id}`);
             setRecentActivity(response.data);
-            console.warn(response.data);
         } catch (error) {
             console.warn("Error fetching recent challenges");
         }
@@ -128,6 +141,8 @@ const Dashboard = () => {
         getSolvedMediumCount();
         getSolvedHardCount();
         getRecentActivity();
+        fetchSubmissionData();
+        console.warn(dataLine);
     }, [room_id, user_id]);
 
     const totalQuestions = { easy: easyCount, medium: mediumCount, hard: hardCount };
@@ -187,22 +202,23 @@ const Dashboard = () => {
         },
     };
 
-    const dataLine = {
-        labels: [
-            '2024-11-01', '2024-11-02', '2024-11-03',
-            '2024-11-04', '2024-11-05', '2024-11-06',
-            '2024-11-07'
-        ],
-        datasets: [
-            {
-                label: 'Code Submissions',
-                data: [5, 10, 8, 15, 7, 14, 20], // Example data for each day
-                fill: false,
-                backgroundColor: 'rgba(75,192,192,0.6)',
-                borderColor: '#080',
-                tension: 0.3,
-            },
-        ],
+    const fetchSubmissionData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/past-week-data/${room_id}/${user_id}`);
+            const { labels, data } = response.data;
+
+            setDataLine({
+                labels,
+                datasets: [
+                    {
+                        ...dataLine.datasets[0],
+                        data,
+                    },
+                ],
+            });
+        } catch (error) {
+            console.error("Error fetching submission data:", error);
+        }
     };
 
     const optionsLine = {

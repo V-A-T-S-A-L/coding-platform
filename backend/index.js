@@ -503,9 +503,59 @@ app.get('/get-recent-activity/:room_id/:user_id', (req, res) => {
         LIMIT 3;
     `;
 
-    db.query(query, [ user_id, room_id], (err, result) => {
+    db.query(query, [user_id, room_id], (err, result) => {
         if (err) return res.status(500).send("Error fetching data");
         res.status(200).send(result)
+    });
+});
+
+//Dashboard line chart for past week submissions
+app.get('/past-week-data/:room_id/:user_id', async (req, res) => {
+    const { room_id, user_id } = req.params;
+
+    const query = `
+        SELECT DATE(s.submitted_at) AS submission_date, COUNT(*) AS submissions_count 
+        FROM submissions s 
+        WHERE s.user_id = ? 
+        AND s.room_id = ? 
+        AND s.submitted_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
+        GROUP BY DATE(s.submitted_at) 
+        ORDER BY submission_date ASC
+    `;
+
+    db.query(query, [user_id, room_id], (err, results) => {
+        if (err) {
+            console.error('Error fetching submission data:', err);
+            return res.status(500).json({ error: 'Failed to fetch submission data' });
+        }
+
+        console.log('Database results:', results); // Log to verify query results
+
+        const labels = [];
+        const data = [];
+        const today = new Date();
+
+        // Create labels for the past 7 days and initialize data with 0s
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateString = date.toISOString().split('T')[0];
+            labels.push(dateString);
+            data.push(0); // Default to 0 submissions
+        }
+
+        // Update data with counts from results if they exist
+        results.forEach((row) => {
+            const index = labels.indexOf(row.submission_date);
+            if (index !== -1) {
+                data[index] = row.submissions_count;
+            }
+        });
+
+        console.log('Final labels:', labels);
+        console.log('Final data:', data); // Log final data for debugging
+
+        res.json({ labels, data });
     });
 });
 
