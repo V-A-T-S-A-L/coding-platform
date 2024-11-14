@@ -529,7 +529,7 @@ app.get('/past-week-data/:room_id/:user_id', async (req, res) => {
             return res.status(500).json({ error: 'Failed to fetch submission data' });
         }
 
-        console.log('Database results:', results); // Log to verify query results
+        // console.log('Database results:', results); // Log to verify query results
 
         const labels = [];
         const data = [];
@@ -539,21 +539,22 @@ app.get('/past-week-data/:room_id/:user_id', async (req, res) => {
         for (let i = 6; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(today.getDate() - i);
-            const dateString = date.toISOString().split('T')[0];
+            const dateString = date.toISOString().split('T')[0]; // Get only YYYY-MM-DD
             labels.push(dateString);
             data.push(0); // Default to 0 submissions
         }
 
         // Update data with counts from results if they exist
         results.forEach((row) => {
-            const index = labels.indexOf(row.submission_date);
+            const submissionDate = row.submission_date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            const index = labels.indexOf(submissionDate)+1;
             if (index !== -1) {
                 data[index] = row.submissions_count;
             }
         });
 
-        console.log('Final labels:', labels);
-        console.log('Final data:', data); // Log final data for debugging
+        // console.log('Final labels:', labels);
+        // console.log('Final data:', data); // Log final data for debugging
 
         res.json({ labels, data });
     });
