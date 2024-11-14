@@ -275,7 +275,7 @@ app.get('/get-status/:room_id/:user_id', (req, res) => {
     const { room_id, user_id } = req.params;
 
     const query = `
-        SELECT challenge_id FROM submissions
+        SELECT challenge_id, test_cases_cleared AS cleared FROM submissions
         WHERE room_id = ? AND user_id = ?
     `
     db.query(query, [room_id, user_id], (err, result) => {

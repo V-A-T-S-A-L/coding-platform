@@ -33,20 +33,24 @@ const Room = () => {
             console.warn("Error fetching problems", error);
         }
     };
-    
+
     const getStatus = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
             const fetchedStatus = response.data;
             setStatus(fetchedStatus);
-            
-            const solvedChallengeIds = fetchedStatus.map(item => item.challenge_id);
-            
+
+            const clearedMap = fetchedStatus.reduce((acc, item) => {
+                acc[item.challenge_id] = item.cleared;
+                return acc;
+            }, {});
+
             const updatedProblems = problems.map(problem => ({
                 ...problem,
-                status: solvedChallengeIds.includes(problem.challenge_id) ? 'solved' : 'unsolved'
+                status: clearedMap[problem.challenge_id] ? 'solved' : 'unsolved',
+                cleared: clearedMap[problem.challenge_id] || 0
             }));
-            
+
             setProblems(updatedProblems);
         } catch (error) {
             console.warn(error);
@@ -57,7 +61,7 @@ const Room = () => {
         checkAdmin();
         getProblems();
     }, [room_id, user_id]);
-    
+
     useEffect(() => {
         if (problems.length > 0) {
             getStatus();
@@ -124,7 +128,21 @@ const Room = () => {
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
-                                    <td><Link style={{ textDecoration: "none", color: "white" }} to={`/room/${room_id}/${problem.challenge_id}`}>{problem.status === "solved" ? (<strong style={{ color: "limegreen" }}>&#10003;&nbsp;&nbsp;</strong>) : ""}{problem.problem_name}</Link></td>
+                                    <td>
+                                        <Link
+                                            style={{ textDecoration: "none", color: "white" }}
+                                            to={`/room/${room_id}/${problem.challenge_id}`}
+                                        >
+                                            {problem.status === "solved" && (
+                                                <strong
+                                                    style={{ color: problem.cleared > 4 ? "limegreen" : "orange" }}
+                                                >
+                                                    &#10003;&nbsp;&nbsp;
+                                                </strong>
+                                            )}
+                                            {problem.problem_name}
+                                        </Link>
+                                    </td>
                                     {problem.difficulty === 'easy' ? (
                                         <td style={{ color: "limegreen" }}>{problem.difficulty}</td>
                                     ) : problem.difficulty === 'medium' ? (
