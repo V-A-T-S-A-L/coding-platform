@@ -1,83 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import './Room.css';
-import axios from 'axios';
-import { json, Link, useParams } from 'react-router-dom';
+import React from "react";
+import { Link, useParams } from "react-router-dom";
 
-const Room = () => {
+const Leaderboard = () => {
 
-    const [roomData, setRoomData] = useState({});
-    const [problems, setProblems] = useState([]);
-    const [status, setStatus] = useState([]);
     const { room_id } = useParams();
     const user = JSON.parse(localStorage.getItem('user'));
     const user_id = user.id;
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    const checkAdmin = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/get-room/${room_id}`);
-            setRoomData(response.data);
-            if (response.data.admin_id === user_id) {
-                setIsAdmin(true);
-            }
-        } catch (error) {
-            console.warn(error);
-        }
-    };
-
-    const getProblems = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/get-problems/${room_id}`);
-            setProblems(response.data);
-        } catch (error) {
-            console.warn("Error fetching problems", error);
-        }
-    };
-
-    const getStatus = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/get-status/${room_id}/${user_id}`);
-            const fetchedStatus = response.data;
-            setStatus(fetchedStatus);
-
-            const clearedMap = fetchedStatus.reduce((acc, item) => {
-                acc[item.challenge_id] = item.cleared;
-                return acc;
-            }, {});
-
-            const updatedProblems = problems.map(problem => ({
-                ...problem,
-                status: clearedMap[problem.challenge_id] ? 'solved' : 'unsolved',
-                cleared: clearedMap[problem.challenge_id] || 0
-            }));
-
-            setProblems(updatedProblems);
-        } catch (error) {
-            console.warn(error);
-        }
-    };
-
-    useEffect(() => {
-        checkAdmin();
-        getProblems();
-    }, [room_id, user_id]);
-
-    useEffect(() => {
-        if (problems.length > 0) {
-            getStatus();
-        }
-    }, [problems]);
-
-
-    const topScorers = [
-        { name: 'User 1', score: 250 },
-        { name: 'User 2', score: 200 },
-        { name: 'User 3', score: 180 }
-    ];
+    const isAdmin = true;
 
     return (
-        <div className="room-page-container">
-            {/* Sidebar */}
+        <div className="settings-container">
             <div className="sidebar">
                 <ul>
                     <li><svg class="svg-icon" viewBox="0 0 20 20">
@@ -90,11 +22,11 @@ const Room = () => {
                     </svg>
                         Chat
                     </li>
-                    <Link to={`/room/${room_id}/leaderboard`} style={{ textDecoration: "none", color: "black" }}><li><svg class="svg-icon" viewBox="0 0 20 20">
+                    <li><svg class="svg-icon" viewBox="0 0 20 20">
                         <path d="M15.94,10.179l-2.437-0.325l1.62-7.379c0.047-0.235-0.132-0.458-0.372-0.458H5.25c-0.241,0-0.42,0.223-0.373,0.458l1.634,7.376L4.06,10.179c-0.312,0.041-0.446,0.425-0.214,0.649l2.864,2.759l-0.724,3.947c-0.058,0.315,0.277,0.554,0.559,0.401l3.457-1.916l3.456,1.916c-0.419-0.238,0.56,0.439,0.56-0.401l-0.725-3.947l2.863-2.759C16.388,10.604,16.254,10.22,15.94,10.179M10.381,2.778h3.902l-1.536,6.977L12.036,9.66l-1.655-3.546V2.778z M5.717,2.778h3.903v3.335L7.965,9.66L7.268,9.753L5.717,2.778zM12.618,13.182c-0.092,0.088-0.134,0.217-0.11,0.343l0.615,3.356l-2.938-1.629c-0.057-0.03-0.122-0.048-0.184-0.048c-0.063,0-0.128,0.018-0.185,0.048l-2.938,1.629l0.616-3.356c0.022-0.126-0.019-0.255-0.11-0.343l-2.441-2.354l3.329-0.441c0.128-0.017,0.24-0.099,0.295-0.215l1.435-3.073l1.435,3.073c0.055,0.116,0.167,0.198,0.294,0.215l3.329,0.441L12.618,13.182z"></path>
                     </svg>
                         Leaderboard
-                    </li></Link>
+                    </li>
                     <Link to={`/room/${room_id}/dashboard`} style={{ textDecoration: "none", color: "black" }}><li><svg class="svg-icon" viewBox="0 0 20 20">
                         <path d="M17.431,2.156h-3.715c-0.228,0-0.413,0.186-0.413,0.413v6.973h-2.89V6.687c0-0.229-0.186-0.413-0.413-0.413H6.285c-0.228,0-0.413,0.184-0.413,0.413v6.388H2.569c-0.227,0-0.413,0.187-0.413,0.413v3.942c0,0.228,0.186,0.413,0.413,0.413h14.862c0.228,0,0.413-0.186,0.413-0.413V2.569C17.844,2.342,17.658,2.156,17.431,2.156 M5.872,17.019h-2.89v-3.117h2.89V17.019zM9.587,17.019h-2.89V7.1h2.89V17.019z M13.303,17.019h-2.89v-6.651h2.89V17.019z M17.019,17.019h-2.891V2.982h2.891V17.019z"></path>
                     </svg>
@@ -112,77 +44,8 @@ const Room = () => {
                     </li></Link>}
                 </ul>
             </div>
-
-            {/* Problems Table */}
-            <div className="problems-container">
-                <div className="problems-card">
-                    <h2 style={{ color: "white" }}>Problems</h2>
-                    {problems.length > 0 ? (<table>
-                        <thead>
-                            <tr>
-                                <th>Problem</th>
-                                <th>Difficulty</th>
-                                <th>Deadline</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {problems.map((problem, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        <Link
-                                            style={{ textDecoration: "none", color: "white" }}
-                                            to={`/room/${room_id}/${problem.challenge_id}`}
-                                        >
-                                            {problem.status === "solved" && (
-                                                <strong
-                                                    style={{ color: problem.cleared > 4 ? "limegreen" : "orange" }}
-                                                >
-                                                    &#10003;&nbsp;&nbsp;
-                                                </strong>
-                                            )}
-                                            {problem.problem_name}
-                                        </Link>
-                                    </td>
-                                    {problem.difficulty === 'easy' ? (
-                                        <td style={{ color: "limegreen" }}>{problem.difficulty}</td>
-                                    ) : problem.difficulty === 'medium' ? (
-                                        <td style={{ color: "orange" }}>{problem.difficulty}</td>
-                                    ) : (
-                                        <td style={{ color: "red" }}>{problem.difficulty}</td>
-                                    )}
-                                    <td>{problem.deadline.split("T")[0]}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>) : (
-                        <h4>No challenges have been created yet</h4>
-                    )}
-                </div>
-            </div>
-
-            {/* Top Scorers */}
-            <div className="top-scorers-container">
-                <div className="top-scorers-card">
-                    <h2>Top Scorers</h2>
-                    {/* <ul>
-                        {topScorers.map((scorer, index) => (
-                            <li key={index}>
-                                {index + 1}. {scorer.name} - {scorer.score} pts
-                            </li>
-                        ))}
-                    </ul> */}
-                    <div className='top-3'>
-                        {topScorers.map((scorer, index) => (
-                            <div key={index} className='top-3-card'>
-                                <p>{scorer.name}</p>
-                                <p>{scorer.score} pts</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
         </div>
-    );
-};
+    )
+}
 
-export default Room;
+export default Leaderboard;
