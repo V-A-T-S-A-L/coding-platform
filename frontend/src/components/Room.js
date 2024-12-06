@@ -116,18 +116,21 @@ const Room = () => {
             {/* Problems Table */}
             <div className="problems-container">
                 <div className="problems-card">
-                    <h2 style={{ color: "white" }}>Problems</h2>
+                    <h2 style={{ color: "white" }}>{roomData.room_name} / Challenges</h2>
                     {problems.length > 0 ? (<table>
                         <thead>
                             <tr>
+                                <th>Sr. No.</th>
                                 <th>Problem</th>
                                 <th>Difficulty</th>
                                 <th>Deadline</th>
+                                <th>Total Submissions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {problems.map((problem, index) => (
                                 <tr key={index}>
+                                    <td>{index + 1}</td>
                                     <td>
                                         <Link
                                             style={{ textDecoration: "none", color: "white" }}
@@ -151,6 +154,7 @@ const Room = () => {
                                         <td style={{ color: "red" }}>{problem.difficulty}</td>
                                     )}
                                     <td>{problem.deadline.split("T")[0]}</td>
+                                    <td>2</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -161,26 +165,7 @@ const Room = () => {
             </div>
 
             {/* Top Scorers */}
-            <div className="top-scorers-container">
-                <div className="top-scorers-card">
-                    <h2>Top Scorers</h2>
-                    {/* <ul>
-                        {topScorers.map((scorer, index) => (
-                            <li key={index}>
-                                {index + 1}. {scorer.name} - {scorer.score} pts
-                            </li>
-                        ))}
-                    </ul> */}
-                    <div className='top-3'>
-                        {topScorers.map((scorer, index) => (
-                            <div key={index} className='top-3-card'>
-                                <p>{scorer.name}</p>
-                                <p>{scorer.score} pts</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            
         </div>
     );
 };

@@ -44,7 +44,7 @@
 
 /* Problems table container styling */
 .problems-container {
-    width: 50%;
+    width: 80%;
     margin: 0 40px;
 }
 
@@ -54,7 +54,7 @@
     padding: 20px;
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 1px dashed #fff;
+    border: 1px solid #333;
     overflow-y: scroll;
     max-height: 73vh;
 }
