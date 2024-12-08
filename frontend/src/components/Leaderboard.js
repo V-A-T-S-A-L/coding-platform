@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-
+import "./Leaderboard.css"
 const Leaderboard = () => {
 
     const { room_id } = useParams();
@@ -43,6 +43,57 @@ const Leaderboard = () => {
                         Settings
                     </li></Link>}
                 </ul>
+            </div>
+            <div className="left-column">
+                <h2>DSA 101 / Leaderboard</h2>
+                <div className="overall">
+                    <table>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Solved</th>
+                            <th>Score</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>Vatsal</th>
+                            <th>6</th>
+                            <th>87</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>Vatsal</th>
+                            <th>6</th>
+                            <th>87</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>Vatsal</th>
+                            <th>6</th>
+                            <th>87</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div className="right-column">
+                <h2>Weekly Top Scorers</h2>
+                <div className="weekly">
+                    <div className="card">
+                        <h3>1st</h3>
+                        <p>Vatsal</p>
+                        <p>Score: 25</p>
+                    </div>
+                    <div className="card">
+                        <h3>1st</h3>
+                        <p>Vatsal</p>
+                        <p>Score: 25</p>
+                    </div>
+                    <div className="card">
+                        <h3>1st</h3>
+                        <p>Vatsal</p>
+                        <p>Score: 25</p>
+                    </div>
+                </div> 
             </div>
         </div>
     )

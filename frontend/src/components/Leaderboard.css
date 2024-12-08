@@ -1,0 +1,22 @@
+.overall {
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 15px;
+    min-height: 82%;
+    overflow-y: scroll;
+}
+
+.weekly {
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.card {
+    width: 23%;
+    text-align: center;
+    background-color: #080808;
+    border-color: #080808;
+}
