@@ -547,7 +547,7 @@ app.get('/past-week-data/:room_id/:user_id', async (req, res) => {
         // Update data with counts from results if they exist
         results.forEach((row) => {
             const submissionDate = row.submission_date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
-            const index = labels.indexOf(submissionDate)+1;
+            const index = labels.indexOf(submissionDate) + 1;
             if (index !== -1) {
                 data[index] = row.submissions_count;
             }
@@ -769,6 +769,50 @@ app.post('/submit', async (req, res) => {
         res.status(500).json({ error: 'Failed to execute code' });
     }
 });
+
+// Get leaderboard data
+app.get('/get-leaderboard/:room_id', async (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            COUNT(s.submission_id) AS challenges_solved,
+            SUM(
+                CASE 
+                    WHEN c.difficulty = 'hard' THEN s.test_cases_cleared * 3
+                    WHEN c.difficulty = 'medium' THEN s.test_cases_cleared * 2
+                    WHEN c.difficulty = 'easy' THEN s.test_cases_cleared * 1
+                    ELSE 0
+                END
+            ) AS total_score
+        FROM 
+            room_members rm
+        JOIN 
+            users u ON rm.user_id = u.id
+        JOIN 
+            submissions s ON rm.room_id = s.room_id AND rm.user_id = s.user_id
+        JOIN 
+            challenges c ON s.challenge_id = c.challenge_id
+        WHERE 
+            rm.room_id = ?
+        GROUP BY 
+            u.id, u.name
+        ORDER BY 
+            total_score DESC;
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) {
+            console.error('Error fetching leaderboard data:', err);
+            return res.status(500).send('Error fetching leaderboard data');
+        }
+        res.status(200).json(result);
+    });
+});
+
+
 
 /*
     Scanner sc = new Scanner(System.in);

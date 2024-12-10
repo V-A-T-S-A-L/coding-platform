@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./Leaderboard.css"
+import axios from "axios";
 const Leaderboard = () => {
 
     const { room_id } = useParams();
     const user = JSON.parse(localStorage.getItem('user'));
     const user_id = user.id;
     const isAdmin = true;
+
+    const[leaderboardData, setLeaderboardData] = useState([]);
+
+    const getLeaderboardData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-leaderboard/${room_id}`);
+            setLeaderboardData(response.data);
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+
+    useEffect(() => {
+        getLeaderboardData();
+    }, [room_id]);
 
     return (
         <div className="settings-container">
@@ -54,41 +70,31 @@ const Leaderboard = () => {
                             <th>Solved</th>
                             <th>Score</th>
                         </tr>
-                        <tr>
-                            <th>1</th>
-                            <th>Vatsal</th>
-                            <th>6</th>
-                            <th>87</th>
-                        </tr>
-                        <tr>
-                            <th>1</th>
-                            <th>Vatsal</th>
-                            <th>6</th>
-                            <th>87</th>
-                        </tr>
-                        <tr>
-                            <th>1</th>
-                            <th>Vatsal</th>
-                            <th>6</th>
-                            <th>87</th>
-                        </tr>
+                        {leaderboardData.map((data, index) => (
+                            <tr key={index}>
+                                <td>{index+1}</td>
+                                <td>{data.user_name}</td>
+                                <td>{data.challenges_solved}</td>
+                                <td>{data.total_score}</td>
+                            </tr>
+                        ))}
                     </table>
                 </div>
             </div>
             <div className="right-column">
                 <h2>Weekly Top Scorers</h2>
                 <div className="weekly">
-                    <div className="card">
+                    <div className="wcard">
                         <h3>1st</h3>
                         <p>Vatsal</p>
                         <p>Score: 25</p>
                     </div>
-                    <div className="card">
+                    <div className="wcard">
                         <h3>1st</h3>
                         <p>Vatsal</p>
                         <p>Score: 25</p>
                     </div>
-                    <div className="card">
+                    <div className="wcard">
                         <h3>1st</h3>
                         <p>Vatsal</p>
                         <p>Score: 25</p>

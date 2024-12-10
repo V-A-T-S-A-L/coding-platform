@@ -14,9 +14,11 @@
     justify-content: space-evenly;
 }
 
-.card {
+.wcard {
     width: 23%;
     text-align: center;
     background-color: #080808;
     border-color: #080808;
+    border-radius: 15px;
+    padding: 20px;
 }
