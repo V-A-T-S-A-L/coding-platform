@@ -117,7 +117,7 @@ const Settings = () => {
                 </ul>
             </div>
             <div class="left-column">
-                <div class="card room-settings">
+                <div class="card-room-settings">
                     <h3>{roomData.room_name} / Room Settings</h3>
                     <label for="room-name">Change Room Name:</label>
                     <div className='change-room-name'>
@@ -134,7 +134,7 @@ const Settings = () => {
                     </div>
                 </div>
 
-                <div class="card room-code">
+                <div class="card-delete">
                     <h3 style={{ color: "red" }}>Delete</h3>
                     <div className='deletion'>
                         <p>Delete all challenges</p>
@@ -173,7 +173,7 @@ const Settings = () => {
             </div>
 
             <div class="right-column">
-                <div class="card members-list">
+                <div class="card-members-list">
                     <h3>Room Members</h3>
                     <table className='member-table'>
                         <tr>

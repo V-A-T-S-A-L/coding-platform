@@ -8,6 +8,26 @@
     padding: 20px;
 }
 
+.card-room-settings {
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 48%;
+}
+
+.card-delete {
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.card-members-list {
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 93%;
+}
+
 .change-room-name {
     display: flex;
     justify-content: space-between;
