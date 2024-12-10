@@ -22,3 +22,13 @@
     border-radius: 15px;
     padding: 20px;
 }
+
+.lb-recent {
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.time {
+    color: gray;
+}

@@ -812,6 +812,40 @@ app.get('/get-leaderboard/:room_id', async (req, res) => {
     });
 });
 
+// Get recent room activity
+app.get('/get-recent-room-activity/:room_id', async (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT 
+            u.name AS username,
+            c.problem_name AS challenge_name,
+            CASE 
+                WHEN s.test_cases_cleared = 5 THEN 'solved'
+                ELSE 'attempted'
+            END AS status,
+            s.submitted_at AS submission_time
+        FROM 
+            submissions s
+        JOIN 
+            users u ON s.user_id = u.id
+        JOIN 
+            challenges c ON s.challenge_id = c.challenge_id
+        WHERE 
+            s.room_id = ?
+        ORDER BY 
+            s.submitted_at DESC
+        LIMIT 5;
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error fetching recent activity.");
+        }
+        res.status(200).send(result);
+    });
+});
 
 
 /*

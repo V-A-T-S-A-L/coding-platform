@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./Leaderboard.css"
 import axios from "axios";
+import { formatDistanceToNow } from 'date-fns';
+
 const Leaderboard = () => {
 
     const { room_id } = useParams();
@@ -9,19 +11,30 @@ const Leaderboard = () => {
     const user_id = user.id;
     const isAdmin = true;
 
-    const[leaderboardData, setLeaderboardData] = useState([]);
+    const [leaderboardData, setLeaderboardData] = useState([]);
+    const [recentRoomActivity, setRecentRoomActivity] = useState([]);
 
     const getLeaderboardData = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-leaderboard/${room_id}`);
             setLeaderboardData(response.data);
-        } catch(error) {
+        } catch (error) {
             console.warn(error);
+        }
+    }
+
+    const getRecentRoomActivity = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-recent-room-activity/${room_id}`);
+            setRecentRoomActivity(response.data);
+        } catch (error) {
+            console.warn("Error fetching recent activity", error);
         }
     }
 
     useEffect(() => {
         getLeaderboardData();
+        getRecentRoomActivity();
     }, [room_id]);
 
     return (
@@ -72,7 +85,7 @@ const Leaderboard = () => {
                         </tr>
                         {leaderboardData.map((data, index) => (
                             <tr key={index}>
-                                <td>{index+1}</td>
+                                <td>{index + 1}</td>
                                 <td>{data.user_name}</td>
                                 <td>{data.challenges_solved}</td>
                                 <td>{data.total_score}</td>
@@ -99,7 +112,21 @@ const Leaderboard = () => {
                         <p>Vatsal</p>
                         <p>Score: 25</p>
                     </div>
-                </div> 
+                </div>
+                <h2>Recent Activity</h2>
+                {recentRoomActivity.length > 0 ? (
+                    <div className="lb-recent">
+                        {recentRoomActivity.map((activity, index) => (
+                            <p key={index}>
+                                {activity.username} {activity.status} "{activity.challenge_name}" <label className="time">({formatDistanceToNow(new Date(activity.submission_time), { addSuffix: true })})</label>
+                            </p>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="recent">
+                        <p>No activity</p>
+                    </div>
+                )}
             </div>
         </div>
     )
