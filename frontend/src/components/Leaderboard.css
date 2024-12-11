@@ -23,6 +23,18 @@
     padding: 20px;
 }
 
+.gold-border {
+    border: 1px solid gold;
+}
+
+.silver-border {
+    border: 1px solid silver;
+}
+
+.bronze-border {
+    border: 1px solid #cd7f32; /* Bronze color */
+}
+
 .lb-recent {
     border: 1px solid #333;
     padding: 20px;
@@ -31,4 +43,8 @@
 
 .time {
     color: gray;
+}
+
+.lb-table th {
+    background-color: #000;
 }

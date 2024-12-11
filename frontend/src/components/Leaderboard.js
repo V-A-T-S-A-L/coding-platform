@@ -13,6 +13,7 @@ const Leaderboard = () => {
 
     const [leaderboardData, setLeaderboardData] = useState([]);
     const [recentRoomActivity, setRecentRoomActivity] = useState([]);
+    const [weeklyTop, setWeeklyTop] = useState([]);
 
     const getLeaderboardData = async () => {
         try {
@@ -32,9 +33,20 @@ const Leaderboard = () => {
         }
     }
 
+    const getWeeklyTop = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get-weekly-top/${room_id}`);
+            setWeeklyTop(response.data);
+            console.warn(response.data);
+        } catch (error) {
+            console.warn("Error fetching weekly top", error);
+        }
+    }
+
     useEffect(() => {
         getLeaderboardData();
         getRecentRoomActivity();
+        getWeeklyTop();
     }, [room_id]);
 
     return (
@@ -76,7 +88,7 @@ const Leaderboard = () => {
             <div className="left-column">
                 <h2>DSA 101 / Leaderboard</h2>
                 <div className="overall">
-                    <table>
+                    <table className="lb-table">
                         <tr>
                             <th>Rank</th>
                             <th>Name</th>
@@ -97,22 +109,33 @@ const Leaderboard = () => {
             <div className="right-column">
                 <h2>Weekly Top Scorers</h2>
                 <div className="weekly">
-                    <div className="wcard">
-                        <h3>1st</h3>
-                        <p>Vatsal</p>
-                        <p>Score: 25</p>
-                    </div>
-                    <div className="wcard">
-                        <h3>1st</h3>
-                        <p>Vatsal</p>
-                        <p>Score: 25</p>
-                    </div>
-                    <div className="wcard">
-                        <h3>1st</h3>
-                        <p>Vatsal</p>
-                        <p>Score: 25</p>
-                    </div>
+                    {weeklyTop && weeklyTop.top_scorers && weeklyTop.top_scorers.length > 0 ? (
+                        <>
+                            {weeklyTop.top_scorers.map((data, index) => {
+                                // Determine the class for the border based on the rank (index)
+                                let borderClass = '';
+                                if (index === 0) {
+                                    borderClass = 'gold-border';
+                                } else if (index === 1) {
+                                    borderClass = 'silver-border';
+                                } else if (index === 2) {
+                                    borderClass = 'bronze-border';
+                                }
+
+                                return (
+                                    <div className={`wcard ${borderClass}`} key={index}>
+                                        <h3>{index + 1}</h3>
+                                        <p>{data.user_name}</p>
+                                        <p>Score- {data.total_score}</p>
+                                    </div>
+                                );
+                            })}
+                        </>
+                    ) : (
+                        <p>No Activity!</p>
+                    )}
                 </div>
+
                 <h2>Recent Activity</h2>
                 {recentRoomActivity.length > 0 ? (
                     <div className="lb-recent">

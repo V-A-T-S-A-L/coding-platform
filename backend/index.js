@@ -847,6 +847,56 @@ app.get('/get-recent-room-activity/:room_id', async (req, res) => {
     });
 });
 
+// Get weekly toppers
+app.get(`/get-weekly-top/:room_id`, async (req, res) => {
+    const { room_id } = req.params;
+
+    const query = `
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            SUM(
+                CASE 
+                    WHEN q.difficulty = 'hard' THEN s.test_cases_cleared * 3
+                    WHEN q.difficulty = 'medium' THEN s.test_cases_cleared * 2
+                    WHEN q.difficulty = 'easy' THEN s.test_cases_cleared * 1
+                    ELSE 0
+                END
+            ) AS total_score,
+            DATE_SUB(CURDATE(), INTERVAL 7 DAY) AS start_date
+        FROM 
+            submissions s
+        JOIN 
+            users u ON s.user_id = u.id
+        JOIN 
+            challenges q ON s.challenge_id = q.challenge_id
+        WHERE 
+            s.room_id = ? AND s.submitted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY 
+            u.id, u.name
+        ORDER BY 
+            total_score DESC
+        LIMIT 3;
+    `;
+
+    db.query(query, [room_id], (err, result) => {
+        if (err) return res.status(500).send("Error fetching weekly top scorers");
+        if (result.length > 0) {
+            const response = {
+                start_date: result[0].start_date, 
+                top_scorers: result.map(({ user_id, user_name, total_score }) => ({
+                    user_id,
+                    user_name,
+                    total_score
+                }))
+            };
+            return res.status(200).send(response);
+        } else {
+            return res.status(200).send({ start_date: null, top_scorers: [] });
+        }
+    });
+});
+
 
 /*
     Scanner sc = new Scanner(System.in);
