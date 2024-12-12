@@ -68,15 +68,8 @@ const Room = () => {
         }
     }, [problems]);
 
-
-    const topScorers = [
-        { name: 'User 1', score: 250 },
-        { name: 'User 2', score: 200 },
-        { name: 'User 3', score: 180 }
-    ];
-
     return (
-        <div className="room-page-container">
+        <div className="settings-container">
             {/* Sidebar */}
             <div className="sidebar">
                 <ul>
@@ -114,7 +107,7 @@ const Room = () => {
             </div>
 
             {/* Problems Table */}
-            <div className="problems-container">
+            <div className="left-column prob">
                 <div className="problems-card">
                     <h2 style={{ color: "white" }}>{roomData.room_name} / Challenges</h2>
                     {problems.length > 0 ? (<table>
@@ -124,7 +117,6 @@ const Room = () => {
                                 <th>Problem</th>
                                 <th>Difficulty</th>
                                 <th>Deadline</th>
-                                <th>Total Submissions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,7 +146,6 @@ const Room = () => {
                                         <td style={{ color: "red" }}>{problem.difficulty}</td>
                                     )}
                                     <td>{problem.deadline.split("T")[0]}</td>
-                                    <td>2</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -162,10 +153,7 @@ const Room = () => {
                         <h4>No challenges have been created yet</h4>
                     )}
                 </div>
-            </div>
-
-            {/* Top Scorers */}
-            
+            </div>       
         </div>
     );
 };

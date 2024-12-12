@@ -112,7 +112,6 @@ const Leaderboard = () => {
                     {weeklyTop && weeklyTop.top_scorers && weeklyTop.top_scorers.length > 0 ? (
                         <>
                             {weeklyTop.top_scorers.map((data, index) => {
-                                // Determine the class for the border based on the rank (index)
                                 let borderClass = '';
                                 if (index === 0) {
                                     borderClass = 'gold-border';
